@@ -1,1 +1,8 @@
-# mp2-practice
+```cpp
+#include <iostream>
+
+int main()
+{
+    std::cout << "Hello, world!\n";
+}
+```
