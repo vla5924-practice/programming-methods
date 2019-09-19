@@ -28,12 +28,14 @@ public:
 	TVector operator-(const TVector& other);
 	ValueType operator*(const TVector& other);
 
-	size_t dim() const;
-	ValueType length() const;
+	size_t getStartIndex() const;
+	size_t getSize() const;
+	double length() const;
 
 	friend std::ostream& operator<<(std::ostream& outputStream, const TVector& vector);
 	friend std::istream& operator>>(std::istream& inputStream, TVector& vector);
 	ValueType& operator[](size_t index);
+	const ValueType& operator[](size_t index) const;
 };
 
 template<typename ValueType>
@@ -151,13 +153,19 @@ ValueType TVector<ValueType>::operator*(const TVector& other)
 }
 
 template<typename ValueType>
-size_t TVector<ValueType>::dim() const
+size_t TVector<ValueType>::getStartIndex() const
+{
+	return startIndex;
+}
+
+template<typename ValueType>
+size_t TVector<ValueType>::getSize() const
 {
 	return size;
 }
 
 template<typename ValueType>
-ValueType TVector<ValueType>::length() const
+double TVector<ValueType>::length() const
 {
 	ValueType result;
 	for (size_t i = 0; i < size; i++)
@@ -166,9 +174,21 @@ ValueType TVector<ValueType>::length() const
 }
 
 template<typename ValueType>
+const ValueType& TVector<ValueType>::operator[](size_t index) const
+{
+	if (index - startIndex >= size)
+		throw std::out_of_range("olala");
+	if (index < startIndex)
+		return ValueType(0);
+	return elements[index];
+}
+
+template<typename ValueType>
 ValueType& TVector<ValueType>::operator[](size_t index)
 {
-	if (index >= size)
+	if (index - startIndex >= size)
+		throw std::out_of_range("olala");
+	if (index < startIndex)
 		throw std::out_of_range("olala");
 	return elements[index];
 }

@@ -3,7 +3,7 @@
 #include "TVector.h"
 
 template <typename ValueType>
-class TMatrix : public TVector<TVector<ValueType> >
+class TMatrix : public TVector<TVector<ValueType>>
 {
 public:
 	TMatrix(size_t size = 10);
@@ -23,9 +23,7 @@ public:
 	ValueType operator*(const TMatrix& other);
 	TVector<ValueType> operator*(const TVector<ValueType>& vector);
 
-	size_t dim() const;
 	ValueType determinant() const;
-	TMatrix& transpose(); // damn
 
 	friend std::ostream& operator<<(std::ostream& outputStream, const TMatrix& matrix);
 	friend std::istream& operator>>(std::istream& inputStream, TMatrix& matrix);
@@ -33,21 +31,24 @@ public:
 
 
 template<typename ValueType>
-TMatrix<ValueType>::TMatrix(size_t size) : TVector<ValueType>(size)
+TMatrix<ValueType>::TMatrix(size_t size) : TVector<TVector<ValueType>>(size)
+{
+	//for (size_t i = size; i >= 1; i--)
+	//	this->elements[i] = TVector<ValueType>(i);
+}
+
+template<typename ValueType>
+TMatrix<ValueType>::TMatrix(const TMatrix& other) : TVector<TVector<ValueType>>(other)
 {
 
 }
 
 template<typename ValueType>
-TMatrix<ValueType>::TMatrix(const TMatrix& other) : TVector<ValueType>(other)
+TMatrix<ValueType>::TMatrix(const TVector<TVector<ValueType>>& raw) :
+	TVector<TVector<ValueType>>(raw)
 {
 
 }
-
-template<typename ValueType>
-TMatrix<ValueType>::TMatrix(const TVector<TVector<ValueType> >& raw) :
-	TVector<TVector<ValueType> >(raw)
-{ }
 
 template<typename ValueType>
 TMatrix<ValueType>::~TMatrix()
@@ -58,28 +59,20 @@ TMatrix<ValueType>::~TMatrix()
 template<typename ValueType>
 bool TMatrix<ValueType>::operator==(const TMatrix<ValueType>& other) const
 {
-	// ERUNDA, PEREDELAT'
 	if (this->size != other.size)
 		return false;
 	for (size_t i = 0; i < this->size; i++)
-			for (size_t j = 0; j < this->elements[i].dim(); j++)
-			if (this->elements[i][j] != other.elements[i][j])
-				return false;
+		if(this->elements[i] != other.elements[i])
+			return false;
 	return true;
-}
-
-template<typename ValueType>
-size_t TMatrix<ValueType>::dim() const
-{
-	return size;
 }
 
 template<typename ValueType>
 ValueType TMatrix<ValueType>::determinant() const
 {
 	ValueType result;
-	for (size_t i = 0; i < size; i++)
-		result *= elements[i][0];
+	for (size_t i = 0; i < this->size; i++)
+		result *= this->elements[i][0];
 	return result;
 }
 
