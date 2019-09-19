@@ -37,7 +37,7 @@ public:
 		if (matrix.size == 0)
 			return inputStream;
 		for (size_t i = 0; i < matrix.size - 1; i++)
-			inputStream >> matrix.elements[i] << '\n';
+			inputStream >> matrix.elements[i];
 		return inputStream;
 	}
 };
@@ -106,6 +106,62 @@ TMatrix<ValueType>& TMatrix<ValueType>::operator=(const TMatrix<ValueType>& othe
 	for (size_t i = 0; i < other.size; i++)
 		this->elements[i] = other.elements[i];
 	return *this;
+}
+
+template<typename ValueType>
+TMatrix<ValueType> TMatrix<ValueType>::operator+(ValueType value)
+{
+	TMatrix<ValueType> result(*this);
+	for (size_t i = 0; i < this->size; i++)
+		this->elements[i] = this->elements[i] + value;
+	return result;
+}
+
+template<typename ValueType>
+TMatrix<ValueType> TMatrix<ValueType>::operator-(ValueType value)
+{
+	TMatrix<ValueType> result(*this);
+	for (size_t i = 0; i < this->size; i++)
+		this->elements[i] = this->elements[i] - value;
+	return result;
+}
+
+template<typename ValueType>
+TMatrix<ValueType> TMatrix<ValueType>::operator*(ValueType value)
+{
+	TMatrix<ValueType> result(*this);
+	for (size_t i = 0; i < this->size; i++)
+		this->elements[i] = this->elements[i] * value;
+	return result;
+}
+
+template<typename ValueType>
+TMatrix<ValueType> TMatrix<ValueType>::operator+(const TMatrix& other)
+{
+	TMatrix<ValueType> result(*this);
+	for (size_t i = 0; i < this->size; i++)
+		this->elements[i] = this->elements[i] + other;
+	return result;
+}
+
+template<typename ValueType>
+TMatrix<ValueType> TMatrix<ValueType>::operator-(const TMatrix& other)
+{
+	TMatrix<ValueType> result(*this);
+	for (size_t i = 0; i < this->size; i++)
+		this->elements[i] = this->elements[i] - other;
+	return result;
+}
+
+template<typename ValueType>
+TMatrix<ValueType> TMatrix<ValueType>::operator*(const TMatrix& other)
+{
+	TMatrix<ValueType> result(*this);
+	for (size_t i = 0; i < this->size; i++)
+		for (size_t j = this->elements[i].getStartIndex(); j < this->size; j++)
+			for (size_t k = 0; k < this->size; k++)
+				result.elements[i][j] += this->elements[i][k] * other.elements[k][j];
+	return result;
 }
 
 template<typename ValueType>
