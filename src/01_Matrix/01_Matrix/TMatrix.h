@@ -158,9 +158,12 @@ TMatrix<ValueType> TMatrix<ValueType>::operator*(const TMatrix& other)
 {
 	TMatrix<ValueType> result(*this);
 	for (size_t i = 0; i < this->size; i++)
-		for (size_t j = this->elements[i].getStartIndex(); j < this->size; j++)
-			for (size_t k = 0; k < this->size; k++)
-				result.elements[i][j] += this->elements[i][k] * other.elements[k][j];
+	{
+		size_t startIndex = this->elements[i].getStartIndex();
+		for (size_t j = startIndex; j < this->size; j++)
+			for (size_t k = 0; k < startIndex + 1; k++) // не до size (но и не факт что до startIndex)
+				result.elements[i][j - startIndex] += this->elements[i][k] * other.elements[k][j - startIndex];
+	}
 	return result;
 }
 
