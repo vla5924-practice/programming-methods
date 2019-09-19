@@ -13,27 +13,41 @@ protected:
 	ValueType* elements;
 	size_t startIndex;
 public:
-	TVector(size_t size = 10, size_t startIndex = 0);
-	TVector(const TVector& other);
+	explicit TVector(size_t size = 10, size_t startIndex = 0);
+	TVector(const TVector<ValueType>& other);
 	~TVector();
 
-	bool operator==(const TVector& other) const;
-	bool operator!=(const TVector& other) const;
+	bool operator==(const TVector<ValueType>& other) const;
+	bool operator!=(const TVector<ValueType>& other) const;
 
-	TVector& operator=(const TVector& other);
-	TVector operator+(ValueType value);
-	TVector operator-(ValueType value);
-	TVector operator*(ValueType value);
-	TVector operator+(const TVector& other);
-	TVector operator-(const TVector& other);
-	ValueType operator*(const TVector& other);
+	TVector<ValueType>& operator=(const TVector<ValueType>& other);
+	TVector<ValueType> operator+(ValueType value);
+	TVector<ValueType> operator-(ValueType value);
+	TVector<ValueType> operator*(ValueType value);
+	TVector<ValueType> operator+(const TVector<ValueType>& other);
+	TVector<ValueType> operator-(const TVector<ValueType>& other);
+	ValueType operator*(const TVector<ValueType>& other);
 
 	size_t getStartIndex() const;
 	size_t getSize() const;
 	double length() const;
 
-	friend std::ostream& operator<<(std::ostream& outputStream, const TVector& vector);
-	friend std::istream& operator>>(std::istream& inputStream, TVector& vector);
+	friend std::ostream& operator<<(std::ostream& outputStream, const TVector& vector)
+	{
+		if (vector.size == 0)
+			return outputStream;
+		for (size_t i = 0; i < vector.size - 1; i++)
+			outputStream << vector.elements[i] << ' ';
+		return outputStream << vector.elements[vector.size - 1];
+	}
+	friend std::istream& operator>>(std::istream& inputStream, TVector& vector)
+	{
+		if (vector.size == 0)
+			return inputStream;
+		for (size_t i = 0; i < vector.size; i++)
+			inputStream >> vector.elements[i];
+		return inputStream;
+	}
 	ValueType& operator[](size_t index);
 	const ValueType& operator[](size_t index) const;
 };
@@ -45,7 +59,7 @@ TVector<ValueType>::TVector(size_t size, size_t startIndex) : size(size), startI
 }
 
 template<typename ValueType>
-TVector<ValueType>::TVector(const TVector& other) : size(other.size), startIndex(other.startIndex)
+TVector<ValueType>::TVector(const TVector<ValueType>& other) : size(other.size), startIndex(other.startIndex)
 {
 	elements = new ValueType[size];
 	memcpy(elements, other.elements, size * sizeof(ValueType));
@@ -59,7 +73,7 @@ TVector<ValueType>::~TVector()
 }
 
 template<typename ValueType>
-bool TVector<ValueType>::operator==(const TVector& other) const
+bool TVector<ValueType>::operator==(const TVector<ValueType>& other) const
 {
 	if (size != other.size)
 		return false;
@@ -70,7 +84,7 @@ bool TVector<ValueType>::operator==(const TVector& other) const
 }
 
 template<typename ValueType>
-bool TVector<ValueType>::operator!=(const TVector& other) const
+bool TVector<ValueType>::operator!=(const TVector<ValueType>& other) const
 {
 	if (size != other.size)
 		return true;
@@ -83,11 +97,15 @@ bool TVector<ValueType>::operator!=(const TVector& other) const
 template<typename ValueType>
 TVector<ValueType>& TVector<ValueType>::operator=(const TVector& other)
 {
-	if (size > 0)
+	if (this == &other)
+		return *this;
+	if (size != other.size)
+	{
 		delete[] elements;
-	size = other.size;
+		elements = new ValueType[size];
+		size = other.size;
+	}
 	startIndex = other.startIndex;
-	elements = new ValueType[size];
 	memcpy(elements, other.elements, size * sizeof(ValueType));
 	return *this;
 }
@@ -120,7 +138,7 @@ TVector<ValueType> TVector<ValueType>::operator*(ValueType value)
 }
 
 template<typename ValueType>
-TVector<ValueType> TVector<ValueType>::operator+(const TVector& other)
+TVector<ValueType> TVector<ValueType>::operator+(const TVector<ValueType>& other)
 {
 	if (size != other.size)
 		throw VecDifferentSizes();
@@ -131,7 +149,7 @@ TVector<ValueType> TVector<ValueType>::operator+(const TVector& other)
 }
 
 template<typename ValueType>
-TVector<ValueType> TVector<ValueType>::operator-(const TVector& other)
+TVector<ValueType> TVector<ValueType>::operator-(const TVector<ValueType>& other)
 {
 	if (size != other.size)
 		throw VecDifferentSizes();
@@ -142,7 +160,7 @@ TVector<ValueType> TVector<ValueType>::operator-(const TVector& other)
 }
 
 template<typename ValueType>
-ValueType TVector<ValueType>::operator*(const TVector& other)
+ValueType TVector<ValueType>::operator*(const TVector<ValueType>& other)
 {
 	if (size != other.size)
 		throw VecDifferentSizes();
@@ -176,41 +194,17 @@ double TVector<ValueType>::length() const
 template<typename ValueType>
 const ValueType& TVector<ValueType>::operator[](size_t index) const
 {
-	if (index - startIndex >= size)
+	if (index >= size)
 		throw std::out_of_range("olala");
-	if (index < startIndex)
-		return ValueType(0);
 	return elements[index];
 }
 
 template<typename ValueType>
 ValueType& TVector<ValueType>::operator[](size_t index)
 {
-	if (index - startIndex >= size)
-		throw std::out_of_range("olala");
-	if (index < startIndex)
+	if (index >= size)
 		throw std::out_of_range("olala");
 	return elements[index];
-}
-
-template<typename ValueType>
-std::ostream& operator<<(std::ostream& outputStream, const TVector<ValueType>& vector)
-{
-	if (vector.size == 0)
-		return outputStream;
-	for (size_t i = 0; i < vector.size - 1; i++)
-		outputStream << vector.elements[i] << ' ';
-	return outputStream << vector.elements[vector.size - 1];
-}
-
-template<typename ValueType>
-std::istream& operator>>(std::istream& inputStream, TVector<ValueType>& vector)
-{
-	if (vector.size == 0)
-		return inputStream;
-	for (size_t i = 0; i < vector.size; i++)
-		inputStream >> vector.elements[i];
-	return inputStream;
 }
 
 #endif // !_TVECTOR_H_
