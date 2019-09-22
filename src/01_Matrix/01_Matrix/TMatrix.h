@@ -11,6 +11,10 @@ public:
 	TMatrix(const TVector<TVector<ValueType>>& raw);
 	~TMatrix();
 
+	ValueType determinant() const;
+	void fillRandomly(ValueType valuesFrom = ValueType(0), ValueType valuesTo = ValueType(1));
+	void fill(ValueType value = ValueType(0));
+
 	bool operator==(const TMatrix<ValueType>& other) const;
 	bool operator!=(const TMatrix<ValueType>& other) const;
 
@@ -23,7 +27,6 @@ public:
 	TMatrix<ValueType> operator*(const TMatrix& other);
 	TVector<ValueType> operator*(const TVector<ValueType>& vector);
 
-	ValueType determinant() const;
 	friend std::ostream& operator<<(std::ostream& outputStream, const TMatrix<ValueType>& matrix)
 	{
 		if (matrix.size == 0)
@@ -46,7 +49,8 @@ public:
 template<typename ValueType>
 TMatrix<ValueType>::TMatrix(size_t size) : TVector<TVector<ValueType>>(size)
 {
-	// assert{size == 0}
+	if (size == 0)
+		throw MatrixInvalidSize();
 	for (size_t i = 0; i < size; i++)
 		this->elements[i] = TVector<ValueType>(size - i, i);
 }
@@ -101,7 +105,7 @@ TMatrix<ValueType>& TMatrix<ValueType>::operator=(const TMatrix<ValueType>& othe
 	if (this->size != other.size)
 	{
 		delete[] this->elements;
-		this->elements = new TVector<TVector<ValueType>>[other.size];
+		this->elements = new TVector<ValueType>[other.size];
 	}
 	for (size_t i = 0; i < other.size; i++)
 		this->elements[i] = other.elements[i];
@@ -140,7 +144,7 @@ TMatrix<ValueType> TMatrix<ValueType>::operator+(const TMatrix& other)
 {
 	TMatrix<ValueType> result(*this);
 	for (size_t i = 0; i < this->size; i++)
-		this->elements[i] = this->elements[i] + other;
+		this->elements[i] = this->elements[i] + other.elements[i];
 	return result;
 }
 
@@ -149,20 +153,40 @@ TMatrix<ValueType> TMatrix<ValueType>::operator-(const TMatrix& other)
 {
 	TMatrix<ValueType> result(*this);
 	for (size_t i = 0; i < this->size; i++)
-		this->elements[i] = this->elements[i] - other;
+		this->elements[i] = this->elements[i] - other.elements[i];
 	return result;
 }
 
 template<typename ValueType>
 TMatrix<ValueType> TMatrix<ValueType>::operator*(const TMatrix& other)
 {
+	if (this->size != other.size)
+		throw MatrixDifferentSizes();
 	TMatrix<ValueType> result(*this);
+	for (size_t i = 0; i < result.size; i++)
+	{
+		size_t currentStartIndex = other.elements[i].getStartIndex();
+		for (size_t j = currentStartIndex, untilRow = 1; j < result.size; j++, untilRow++)
+		{
+			result.elements[i][j] = ValueType(0);
+			for (size_t k = 0; k < untilRow; k++)
+				result.elements[i][j] = result.elements[i][j] + this->elements[i][k + i] * result.elements[k + i][j];
+		}
+	}
+	return result;
+}
+
+template<typename ValueType>
+TVector<ValueType> TMatrix<ValueType>::operator*(const TVector<ValueType>& vector)
+{
+	if (this->size != vector.getSize())
+		throw VectorInvalidSize();
+	TVector<ValueType> result(this->size);
 	for (size_t i = 0; i < this->size; i++)
 	{
-		size_t startIndex = this->elements[i].getStartIndex();
-		for (size_t j = startIndex; j < this->size; j++)
-			for (size_t k = 0; k < startIndex + 1; k++) // не до size (но и не факт что до startIndex)
-				result.elements[i][j - startIndex] += this->elements[i][k] * other.elements[k][j - startIndex];
+		result[i] = ValueType(0);
+		for (size_t j = this->elements[i].getStartIndex(); j < this->size; j++)
+			result[i] = result[i] + this->elements[i][j] * vector[j];
 	}
 	return result;
 }
@@ -170,10 +194,28 @@ TMatrix<ValueType> TMatrix<ValueType>::operator*(const TMatrix& other)
 template<typename ValueType>
 ValueType TMatrix<ValueType>::determinant() const
 {
-	ValueType result;
+	ValueType result(0);
 	for (size_t i = 0; i < this->size; i++)
 		result *= this->elements[i][0];
 	return result;
+}
+
+template<typename ValueType>
+void TMatrix<ValueType>::fillRandomly(ValueType valuesFrom, ValueType valuesTo)
+{
+	if (this->size == 0)
+		return;
+	for (size_t i = 0; i < this->size; i++)
+		this->elements[i].fillRandomly(valuesFrom, valuesTo);
+}
+
+template<typename ValueType>
+void TMatrix<ValueType>::fill(ValueType value)
+{
+	if (this->size == 0)
+		return;
+	for (size_t i = 0; i < this->size; i++)
+		this->elements[i].fill(value);
 }
 
 #endif // !_TMATRIX_H_
