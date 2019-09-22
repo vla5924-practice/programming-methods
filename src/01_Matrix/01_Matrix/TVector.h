@@ -42,7 +42,7 @@ public:
 		outputStream << "[ ";
 		if (vector.size == 0)
 			return outputStream << ']';
-		outputStream.setf(std::ios::fixed);
+//		outputStream.setf(std::ios::fixed);
 		for (size_t i = 0; i < vector.startIndex; i++)
 			outputStream << std::setw(5) << std::setprecision(2) << std::right << ValueType(0) << ' ';
 		for (size_t i = 0; i < vector.size; i++)
@@ -114,7 +114,7 @@ TVector<ValueType>& TVector<ValueType>::operator=(const TVector& other)
 		return *this;
 	if (size != other.size)
 	{
-		delete elements;
+		delete[] elements;
 		elements = new ValueType[size];
 	}
 	size = other.size;

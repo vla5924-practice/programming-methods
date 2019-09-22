@@ -100,7 +100,7 @@ TMatrix<ValueType>& TMatrix<ValueType>::operator=(const TMatrix<ValueType>& othe
 		return *this;
 	if (this->size != other.size)
 	{
-		delete this->elements;
+		delete[] this->elements;
 		this->elements = new TVector<ValueType>[other.size];
 	}
 	this->size = other.size;

@@ -10,13 +10,18 @@ ValueType random(ValueType min = ValueType(0), ValueType max = ValueType(1))
 int main()
 {
 	srand((unsigned)time(0));
-	size_t commonSize = random<size_t>(3, 6);
+	size_t commonSize   = random<size_t>(3, 6);
 	size_t uncommonSize = random<size_t>(0, 1) ? commonSize + random<size_t>(1, 2) : commonSize - random<size_t>(1, 2);
-	TVector<double> vectors[] =  { TVector<double>(commonSize), TVector<double>(uncommonSize) };
-	TMatrix<double> matrixes[] = { TMatrix<double>(commonSize), TMatrix<double>(commonSize), TMatrix<double>(uncommonSize),  TMatrix<double>(commonSize) };
+	TVector<double> vectors[]  = { TVector<double>(commonSize), TVector<double>(uncommonSize) };
+	TMatrix<double> matrixes[] = { 
+		TMatrix<double>(commonSize), 
+		TMatrix<double>(commonSize),
+		TMatrix<double>(uncommonSize),  
+		TMatrix<double>(commonSize) 
+	};
+	// может вылетать в момент конструирования любого из объектов массива или не вылетать
 
-//	TVector<double> vectors[] =  { TVector<double>(3), TVector<double>(2) };
-//	TMatrix<double> matrixe(5);
+//	TVector<double> vectors[]  = { TVector<double>(3), TVector<double>(2) };
 //	TMatrix<double> matrixes[] = { TMatrix<double>(5), TMatrix<double>(3), TMatrix<double>(2),  TMatrix<double>(3) };
 
 	enum Idx
