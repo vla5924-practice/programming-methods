@@ -38,13 +38,16 @@ public:
 
 	friend std::ostream& operator<<(std::ostream& outputStream, const TVector& vector)
 	{
-		outputStream << '[ ';
+		outputStream << "[ ";
 		if (vector.size == 0)
 			return outputStream << ']';
+		size_t oldPrecision = outputStream.precision();
+		outputStream.precision(2);
 		for (size_t i = 0; i < vector.startIndex; i++)
 			outputStream << ValueType(0) << ' ';
 		for (size_t i = 0; i < vector.size; i++)
 			outputStream << vector.elements[i] << ' ';
+		outputStream.precision(oldPrecision);
 		return outputStream << ']';
 	}
 	friend std::istream& operator>>(std::istream& inputStream, TVector& vector)
@@ -62,9 +65,11 @@ public:
 template<typename ValueType>
 TVector<ValueType>::TVector(size_t size, size_t startIndex) : size(size), startIndex(startIndex)
 {
-	elements = size ? new ValueType[size] : nullptr;
-	for (size_t i = 0; i < size; i++)
-		elements[i] = ValueType(0);
+	if (size == 0)
+		throw VectorInvalidSize();
+	elements = new ValueType[size];
+//	for (size_t i = 0; i < size; i++)
+//		elements[i] = ValueType(0);
 }
 
 template<typename ValueType>
@@ -110,10 +115,8 @@ TVector<ValueType>& TVector<ValueType>::operator=(const TVector& other)
 		return *this;
 	if (size != other.size)
 	{
-		if (size)
-			delete[] elements;
-		if (other.size)
-			elements = new ValueType[size];
+		delete[] elements;
+		elements = new ValueType[size];
 	}
 	size = other.size;
 	startIndex = other.startIndex;
@@ -155,7 +158,7 @@ TVector<ValueType> TVector<ValueType>::operator+(const TVector<ValueType>& other
 		throw VectorDifferentSizes();
 	TVector<ValueType> result(*this);
 	for (size_t i = 0; i < size; i++)
-		result.elements[i] += other.elements[i];
+		result.elements[i] = result.elements[i] + other.elements[i];
 	return result;
 }
 
@@ -166,7 +169,7 @@ TVector<ValueType> TVector<ValueType>::operator-(const TVector<ValueType>& other
 		throw VectorDifferentSizes();
 	TVector<ValueType> result(*this);
 	for (size_t i = 0; i < size; i++)
-		result.elements[i] -= other.elements[i];
+		result.elements[i] = result.elements[i] - other.elements[i];
 	return result;
 }
 
@@ -218,7 +221,7 @@ void TVector<ValueType>::fillRandomly(ValueType valuesFrom, ValueType valuesTo)
 	for (size_t i = 0; i < size; i++)
 	{
 		ValueType randValue(rand());
-		ValueType randOperand = randValue * ValueType(RAND_MAX) / (valuesTo - valuesFrom + ValueType(1));
+		ValueType randOperand = randValue * (valuesTo - valuesFrom) / ValueType(RAND_MAX);
 		elements[i] = randOperand + valuesFrom;
 	}
 }

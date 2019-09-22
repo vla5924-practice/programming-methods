@@ -9,7 +9,7 @@ public:
 	explicit TMatrix(size_t size = 10);
 	TMatrix(const TMatrix<ValueType>& other);
 	TMatrix(const TVector<TVector<ValueType>>& raw);
-	~TMatrix();
+	~TMatrix() = default;
 
 	ValueType determinant() const;
 	void fillRandomly(ValueType valuesFrom = ValueType(0), ValueType valuesTo = ValueType(1));
@@ -56,20 +56,17 @@ TMatrix<ValueType>::TMatrix(size_t size) : TVector<TVector<ValueType>>(size)
 }
 
 template<typename ValueType>
-TMatrix<ValueType>::TMatrix(const TMatrix<ValueType>& other) : TVector<TVector<ValueType>>(other)
+TMatrix<ValueType>::TMatrix(const TMatrix<ValueType>& other)
 {
-
+	this->size = other.size;
+	this->elements = new TVector<ValueType>[other.size];
+	for (size_t i = 0; i < other.size; i++)
+		this->elements[i] = other.elements[i];
 }
 
 template<typename ValueType>
 TMatrix<ValueType>::TMatrix(const TVector<TVector<ValueType>>& raw) :
 	TVector<TVector<ValueType>>(raw)
-{
-
-}
-
-template<typename ValueType>
-TMatrix<ValueType>::~TMatrix()
 {
 
 }
@@ -101,12 +98,12 @@ TMatrix<ValueType>& TMatrix<ValueType>::operator=(const TMatrix<ValueType>& othe
 {
 	if (this == &other)
 		return *this;
-	this->size = other.size;
 	if (this->size != other.size)
 	{
 		delete[] this->elements;
 		this->elements = new TVector<ValueType>[other.size];
 	}
+	this->size = other.size;
 	for (size_t i = 0; i < other.size; i++)
 		this->elements[i] = other.elements[i];
 	return *this;
@@ -142,6 +139,8 @@ TMatrix<ValueType> TMatrix<ValueType>::operator*(ValueType value)
 template<typename ValueType>
 TMatrix<ValueType> TMatrix<ValueType>::operator+(const TMatrix& other)
 {
+	if (this->size != other.size)
+		throw MatrixDifferentSizes();
 	TMatrix<ValueType> result(*this);
 	for (size_t i = 0; i < this->size; i++)
 		this->elements[i] = this->elements[i] + other.elements[i];
@@ -151,6 +150,8 @@ TMatrix<ValueType> TMatrix<ValueType>::operator+(const TMatrix& other)
 template<typename ValueType>
 TMatrix<ValueType> TMatrix<ValueType>::operator-(const TMatrix& other)
 {
+	if (this->size != other.size)
+		throw MatrixDifferentSizes();
 	TMatrix<ValueType> result(*this);
 	for (size_t i = 0; i < this->size; i++)
 		this->elements[i] = this->elements[i] - other.elements[i];
