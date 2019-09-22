@@ -1,6 +1,7 @@
 ﻿#ifndef _TVECTOR_H_
 #define _TVECTOR_H_
 #include <iostream>
+#include <iomanip>
 #include <cstring>
 #include <cmath>
 #include <cstdlib>
@@ -41,13 +42,11 @@ public:
 		outputStream << "[ ";
 		if (vector.size == 0)
 			return outputStream << ']';
-		size_t oldPrecision = outputStream.precision();
-		outputStream.precision(2);
+		outputStream.setf(std::ios::fixed);
 		for (size_t i = 0; i < vector.startIndex; i++)
-			outputStream << ValueType(0) << ' ';
+			outputStream << std::setw(5) << std::setprecision(2) << std::right << ValueType(0) << ' ';
 		for (size_t i = 0; i < vector.size; i++)
-			outputStream << vector.elements[i] << ' ';
-		outputStream.precision(oldPrecision);
+			outputStream << std::setw(5) << std::setprecision(2) << std::right << vector.elements[i] << ' ';
 		return outputStream << ']';
 	}
 	friend std::istream& operator>>(std::istream& inputStream, TVector& vector)
@@ -115,7 +114,7 @@ TVector<ValueType>& TVector<ValueType>::operator=(const TVector& other)
 		return *this;
 	if (size != other.size)
 	{
-		delete[] elements;
+		delete elements;
 		elements = new ValueType[size];
 	}
 	size = other.size;
