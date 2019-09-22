@@ -241,6 +241,7 @@ void TVector<ValueType>::fill(ValueType value)
 template<typename ValueType>
 const ValueType& TVector<ValueType>::operator[](size_t index) const
 {
+//	std::cout << "TVector::operator[]const index=" << index << '\n';
 	if (index - startIndex >= size)
 		throw std::out_of_range("olala");
 	return elements[index - startIndex];
@@ -249,6 +250,7 @@ const ValueType& TVector<ValueType>::operator[](size_t index) const
 template<typename ValueType>
 ValueType& TVector<ValueType>::operator[](size_t index)
 {
+//	std::cout << "TVector::operator[] index=" << index << '\n';
 	if (index - startIndex >= size)
 		throw std::out_of_range("olala");
 	return elements[index - startIndex];
