@@ -64,6 +64,7 @@ public:
 template<typename ValueType>
 TVector<ValueType>::TVector(size_t size, size_t startIndex) : size(size), startIndex(startIndex)
 {
+	std::cout << "TVector::TVector(size, startIndex) size="<< size << " startIndex=" << startIndex << "\n";
 	if (size == 0)
 		throw VectorInvalidSize();
 	elements = new ValueType[size];
@@ -74,6 +75,7 @@ TVector<ValueType>::TVector(size_t size, size_t startIndex) : size(size), startI
 template<typename ValueType>
 TVector<ValueType>::TVector(const TVector<ValueType>& other) : size(other.size), startIndex(other.startIndex)
 {
+	std::cout << "TVector::TVector(const TVector&) \n";
 	elements = new ValueType[size];
 	memcpy(elements, other.elements, size * sizeof(ValueType));
 }
@@ -81,8 +83,26 @@ TVector<ValueType>::TVector(const TVector<ValueType>& other) : size(other.size),
 template<typename ValueType>
 TVector<ValueType>::~TVector()
 {
-	if (size > 0)
+	std::cout << "TVector::~TVector() size=" << size << "\n";
+//	if (size > 0)
+//		delete[] elements;
+}
+
+template<typename ValueType>
+TVector<ValueType>& TVector<ValueType>::operator=(const TVector& other)
+{
+	std::cout << "TVector::operator= \n";
+	if (this == &other)
+		return *this;
+	if (size != other.size)
+	{
 		delete[] elements;
+		elements = new ValueType[size];
+	}
+	size = other.size;
+	startIndex = other.startIndex;
+	memcpy(elements, other.elements, size * sizeof(ValueType));
+	return *this;
 }
 
 template<typename ValueType>
@@ -105,22 +125,6 @@ bool TVector<ValueType>::operator!=(const TVector<ValueType>& other) const
 		if (elements[i] != other.elements[i])
 			return true;
 	return false;
-}
-
-template<typename ValueType>
-TVector<ValueType>& TVector<ValueType>::operator=(const TVector& other)
-{
-	if (this == &other)
-		return *this;
-	if (size != other.size)
-	{
-		delete[] elements;
-		elements = new ValueType[size];
-	}
-	size = other.size;
-	startIndex = other.startIndex;
-	memcpy(elements, other.elements, size * sizeof(ValueType));
-	return *this;
 }
 
 template<typename ValueType>

@@ -9,7 +9,8 @@ public:
 	explicit TMatrix(size_t size = 10);
 	TMatrix(const TMatrix<ValueType>& other);
 	TMatrix(const TVector<TVector<ValueType>>& raw);
-	~TMatrix() = default;
+	~TMatrix();
+//	~TMatrix() = default;
 
 	ValueType determinant() const;
 	void fillRandomly(ValueType valuesFrom = ValueType(0), ValueType valuesTo = ValueType(1));
@@ -49,6 +50,7 @@ public:
 template<typename ValueType>
 TMatrix<ValueType>::TMatrix(size_t size) : TVector<TVector<ValueType>>(size)
 {
+	std::cout << "TMatrix::TMatrix(size) size=" << size << "\n";
 	if (size == 0)
 		throw MatrixInvalidSize();
 	for (size_t i = 0; i < size; i++)
@@ -58,6 +60,7 @@ TMatrix<ValueType>::TMatrix(size_t size) : TVector<TVector<ValueType>>(size)
 template<typename ValueType>
 TMatrix<ValueType>::TMatrix(const TMatrix<ValueType>& other)
 {
+	std::cout << "TMatrix::TMatrix(const TMatrix&) \n";
 	this->size = other.size;
 	this->elements = new TVector<ValueType>[other.size];
 	for (size_t i = 0; i < other.size; i++)
@@ -68,7 +71,30 @@ template<typename ValueType>
 TMatrix<ValueType>::TMatrix(const TVector<TVector<ValueType>>& raw) :
 	TVector<TVector<ValueType>>(raw)
 {
+	std::cout << "TMatrix::TMatrix(raw) \n";
+}
 
+template<typename ValueType>
+TMatrix<ValueType>::~TMatrix()
+{
+	std::cout << "TMatrix::~TMatrix() \n";
+}
+
+template<typename ValueType>
+TMatrix<ValueType>& TMatrix<ValueType>::operator=(const TMatrix<ValueType>& other)
+{
+	std::cout << "TMatrix::operator= \n";
+	if (this == &other)
+		return *this;
+	if (this->size != other.size)
+	{
+		delete[] this->elements;
+		this->elements = new TVector<ValueType>[other.size];
+	}
+	this->size = other.size;
+	for (size_t i = 0; i < other.size; i++)
+		this->elements[i] = other.elements[i];
+	return *this;
 }
 
 template<typename ValueType>
@@ -91,22 +117,6 @@ bool TMatrix<ValueType>::operator!=(const TMatrix<ValueType>& other) const
 		if (this->elements[i] != other.elements[i])
 			return true;
 	return false;
-}
-
-template<typename ValueType>
-TMatrix<ValueType>& TMatrix<ValueType>::operator=(const TMatrix<ValueType>& other)
-{
-	if (this == &other)
-		return *this;
-	if (this->size != other.size)
-	{
-		delete[] this->elements;
-		this->elements = new TVector<ValueType>[other.size];
-	}
-	this->size = other.size;
-	for (size_t i = 0; i < other.size; i++)
-		this->elements[i] = other.elements[i];
-	return *this;
 }
 
 template<typename ValueType>
