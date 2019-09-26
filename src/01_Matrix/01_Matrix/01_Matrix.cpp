@@ -12,13 +12,7 @@ int main()
 	srand((unsigned)time(0));
 	size_t commonSize   = random<size_t>(2, 6), uncommonSize = random<size_t>(2, 6);
 	TVector<double> vectors[]  = { TVector<double>(commonSize), TVector<double>(uncommonSize) };
-	TMatrix<double> matrixes[] = { 
-		TMatrix<double>(commonSize), 
-		TMatrix<double>(commonSize),
-		TMatrix<double>(uncommonSize),  
-		TMatrix<double>(commonSize) 
-	};
-	// может вылетать в момент конструирования любого из объектов массива или не вылетать
+	TMatrix<double> matrixes[] = { TMatrix<double>(commonSize), TMatrix<double>(commonSize),TMatrix<double>(uncommonSize),  TMatrix<double>(commonSize) };
 
 	enum Idx
 	{
@@ -29,7 +23,6 @@ int main()
 		vectors[i].fillRandomly(0., 10.);
 	for (size_t i = 0; i < 3; i++)
 		matrixes[i].fillRandomly(0., 10.);
-	//matrixes[Idx::Result].fill(0.);
 
 	std::cout << "Vector a: " << vectors[Idx::A] << '\n';
 	std::cout << "Vector b: " << vectors[Idx::B] << '\n';

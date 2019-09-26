@@ -3,35 +3,52 @@
 #include <string>
 #include <exception>
 
-class VectorDifferentSizes : std::logic_error
+class VectorDifferentSizes
 {
-	const std::string whatStr = "olala";
+	const std::string whatStr = "Vectors have different sizes.";
 public:
-	VectorDifferentSizes() : std::logic_error(whatStr.c_str()) {}
 	virtual const char* what() const { return whatStr.c_str(); }
 };
 
-class VectorInvalidSize : std::logic_error
+class VectorInvalidSize
 {
-	const std::string whatStr = "olala";
+	const std::string whatStr = "Vector cannot have that size.";
 public:
-	VectorInvalidSize() : std::logic_error(whatStr.c_str()) {}
+	virtual const char* what() const { return whatStr.c_str(); }
+};
+
+class VectorInvalidIndex
+{
+	const std::string whatStr = "Vector does not have element with that index.";
+public:
 	virtual const char* what() const { return whatStr.c_str(); }
 };
 
 class MatrixDifferentSizes : VectorDifferentSizes
 {
-	const std::string whatStr = "olala";
+	const std::string whatStr = "Matrixes have different sizes.";
 public:
-	MatrixDifferentSizes() {}
 	virtual const char* what() const { return whatStr.c_str(); }
 };
 
 class MatrixInvalidSize : VectorInvalidSize
 {
-	const std::string whatStr = "olala";
+	const std::string whatStr = "Matrix cannot have that size.";
 public:
-	MatrixInvalidSize() {}
+	virtual const char* what() const { return whatStr.c_str(); }
+};
+
+class MatrixInvalidIndex : VectorInvalidIndex
+{
+	const std::string whatStr = "Matrix does not have element with that index.";
+public:
+	virtual const char* what() const { return whatStr.c_str(); }
+};
+
+class MatrixNonConvertible
+{
+	const std::string whatStr = "Vector is non-convertible into matrix.";
+public:
 	virtual const char* what() const { return whatStr.c_str(); }
 };
 

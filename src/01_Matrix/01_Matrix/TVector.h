@@ -1,39 +1,46 @@
 ﻿#ifndef _TVECTOR_H_
 #define _TVECTOR_H_
+
 #include <iostream>
 #include <iomanip>
-#include <cstring>
+#include <ctime>
 #include <cmath>
-#include <cstdlib>
 #include "Exceptions.h"
 
-template <typename ValueType>
+template<typename ValueType>
 class TVector
 {
 protected:
 	size_t size;
-	ValueType* elements;
 	size_t startIndex;
+	ValueType* elements;
+
 public:
-	explicit TVector(size_t size = 1, size_t startIndex = 0);
-	TVector(const TVector<ValueType>& other);
+	explicit TVector(size_t _size = 1, size_t _startIndex = 0);
+	TVector(const TVector& other);
 	~TVector();
 
-	bool operator==(const TVector<ValueType>& other) const;
-	bool operator!=(const TVector<ValueType>& other) const;
+	bool operator==(const TVector& other) const;
+	bool operator!=(const TVector& other) const;
 
-	TVector<ValueType>& operator=(const TVector<ValueType>& other);
-	TVector<ValueType> operator+(ValueType value);
-	TVector<ValueType> operator-(ValueType value);
-	TVector<ValueType> operator*(ValueType value);
-	TVector<ValueType> operator+(const TVector<ValueType>& other);
-	TVector<ValueType> operator-(const TVector<ValueType>& other);
-	ValueType operator*(const TVector<ValueType>& other);
+	TVector operator+(ValueType value);
+	TVector operator-(ValueType value);
+	TVector operator*(ValueType value);
 
-	size_t getStartIndex() const;
+	TVector operator+(const TVector& other);
+	TVector operator-(const TVector& other);
+
+	ValueType operator*(const TVector& other);
+	ValueType length() const;
+
 	size_t getSize() const;
-	double length() const;
-	ValueType& getNonShifted(size_t realIndex);
+	size_t getStartIndex() const;
+	ValueType& getValue(size_t index);
+
+	ValueType& operator[](size_t index);
+	const ValueType& operator[](size_t index) const;
+	TVector& operator=(const TVector& other);
+
 	void fillRandomly(ValueType valuesFrom = ValueType(0), ValueType valuesTo = ValueType(1));
 	void fill(ValueType value = ValueType(0));
 
@@ -42,7 +49,6 @@ public:
 		outputStream << "[ ";
 		if (vector.size == 0)
 			return outputStream << ']';
-//		outputStream.setf(std::ios::fixed);
 		for (size_t i = 0; i < vector.startIndex; i++)
 			outputStream << std::setw(5) << std::setprecision(2) << std::right << ValueType(0) << ' ';
 		for (size_t i = 0; i < vector.size; i++)
@@ -57,59 +63,37 @@ public:
 			inputStream >> vector.elements[i];
 		return inputStream;
 	}
-	ValueType& operator[](size_t index);
-	const ValueType& operator[](size_t index) const;
 };
 
 template<typename ValueType>
 TVector<ValueType>::TVector(size_t size, size_t startIndex) : size(size), startIndex(startIndex)
 {
-	std::cout << "TVector::TVector(size, startIndex) size="<< size << " startIndex=" << startIndex << "\n";
 	if (size == 0)
 		throw VectorInvalidSize();
 	elements = new ValueType[size];
-//	for (size_t i = 0; i < size; i++)
-//		elements[i] = ValueType(0);
 }
 
 template<typename ValueType>
-TVector<ValueType>::TVector(const TVector<ValueType>& other) : size(other.size), startIndex(other.startIndex)
+TVector<ValueType>::TVector(const TVector& other)
 {
-	std::cout << "TVector::TVector(const TVector&) \n";
+	size = other.size;
 	elements = new ValueType[size];
-	memcpy(elements, other.elements, size * sizeof(ValueType));
+	memcpy(elements, other.elements, sizeof(ValueType) * size);
+	startIndex = other.startIndex;
 }
 
 template<typename ValueType>
 TVector<ValueType>::~TVector()
 {
-	std::cout << "TVector::~TVector() size=" << size << "\n";
-//	if (size > 0)
-//		delete[] elements;
-}
-
-template<typename ValueType>
-TVector<ValueType>& TVector<ValueType>::operator=(const TVector& other)
-{
-	std::cout << "TVector::operator= \n";
-	if (this == &other)
-		return *this;
-	if (size != other.size)
-	{
+	if (size > 0)
 		delete[] elements;
-		elements = new ValueType[size];
-	}
-	size = other.size;
-	startIndex = other.startIndex;
-	memcpy(elements, other.elements, size * sizeof(ValueType));
-	return *this;
 }
 
 template<typename ValueType>
-bool TVector<ValueType>::operator==(const TVector<ValueType>& other) const
+bool TVector<ValueType>::operator==(const TVector& other) const
 {
 	if (size != other.size)
-		return false;
+		throw VectorDifferentSizes();
 	for (size_t i = 0; i < size; i++)
 		if (elements[i] != other.elements[i])
 			return false;
@@ -117,22 +101,17 @@ bool TVector<ValueType>::operator==(const TVector<ValueType>& other) const
 }
 
 template<typename ValueType>
-bool TVector<ValueType>::operator!=(const TVector<ValueType>& other) const
+bool TVector<ValueType>::operator!=(const TVector& other) const
 {
-	if (size != other.size)
-		return true;
-	for (size_t i = 0; i < size; i++)
-		if (elements[i] != other.elements[i])
-			return true;
-	return false;
+	return !(*this == other);
 }
 
 template<typename ValueType>
 TVector<ValueType> TVector<ValueType>::operator+(ValueType value)
 {
 	TVector<ValueType> result(*this);
-	for (size_t i = 0; i < size; i++)
-		result.elements[i] += value;
+	for (size_t i = 0; i < result.size; i++)
+		result.elements[i] = elements[i] + value;
 	return result;
 }
 
@@ -140,8 +119,8 @@ template<typename ValueType>
 TVector<ValueType> TVector<ValueType>::operator-(ValueType value)
 {
 	TVector<ValueType> result(*this);
-	for (size_t i = 0; i < size; i++)
-		result.elements[i] -= value;
+	for (size_t i = 0; i < result.size; i++)
+		result.elements[i] = result.elements[i] - value;
 	return result;
 }
 
@@ -149,24 +128,24 @@ template<typename ValueType>
 TVector<ValueType> TVector<ValueType>::operator*(ValueType value)
 {
 	TVector<ValueType> result(*this);
-	for (size_t i = 0; i < size; i++)
-		result.elements[i] *= value;
+	for (size_t i = 0; i < result.size; i++)
+		result.elements[i] = result.elements[i] * value;
 	return result;
 }
 
 template<typename ValueType>
-TVector<ValueType> TVector<ValueType>::operator+(const TVector<ValueType>& other)
+TVector<ValueType> TVector<ValueType>::operator+(const TVector& other)
 {
 	if (size != other.size)
 		throw VectorDifferentSizes();
 	TVector<ValueType> result(*this);
 	for (size_t i = 0; i < size; i++)
-		result.elements[i] = result.elements[i] + other.elements[i];
+		result.elements[i] = other.elements[i] + result.elements[i];
 	return result;
 }
 
 template<typename ValueType>
-TVector<ValueType> TVector<ValueType>::operator-(const TVector<ValueType>& other)
+TVector<ValueType> TVector<ValueType>::operator-(const TVector& other)
 {
 	if (size != other.size)
 		throw VectorDifferentSizes();
@@ -177,20 +156,23 @@ TVector<ValueType> TVector<ValueType>::operator-(const TVector<ValueType>& other
 }
 
 template<typename ValueType>
-ValueType TVector<ValueType>::operator*(const TVector<ValueType>& other)
+ValueType TVector<ValueType>::operator*(const TVector& other)
 {
 	if (size != other.size)
 		throw VectorDifferentSizes();
 	ValueType result(0);
 	for (size_t i = 0; i < size; i++)
-		result += elements[i] * other.elements[i];
+		result = result + elements[i] * other.elements[i];
 	return result;
 }
 
 template<typename ValueType>
-size_t TVector<ValueType>::getStartIndex() const
+ValueType TVector<ValueType>::length() const
 {
-	return startIndex;
+	ValueType result(0);
+	for (size_t i = 0; i < size; i++)
+		result += elements[i] * elements[i];
+	return sqrt(result);
 }
 
 template<typename ValueType>
@@ -200,20 +182,50 @@ size_t TVector<ValueType>::getSize() const
 }
 
 template<typename ValueType>
-double TVector<ValueType>::length() const
+size_t TVector<ValueType>::getStartIndex() const
 {
-	ValueType result;
-	for (size_t i = 0; i < size; i++)
-		result += elements[i] * elements[i];
-	return sqrt(result);
+	return startIndex;
 }
 
 template<typename ValueType>
-ValueType& TVector<ValueType>::getNonShifted(size_t realIndex)
+ValueType& TVector<ValueType>::operator[](size_t index)
 {
-	if (realIndex >= size)
-		throw std::out_of_range("olala");
-	return elements[realIndex];
+	if (index - startIndex >= size)
+		throw VectorInvalidIndex();
+	return elements[index - startIndex];
+}
+
+template<typename ValueType>
+const ValueType& TVector<ValueType>::operator[](size_t index) const
+{
+	if (index - startIndex >= size)
+		throw VectorInvalidIndex();
+	return elements[index - startIndex];
+}
+
+template<typename ValueType>
+ValueType& TVector<ValueType>::getValue(size_t index)
+{
+	if (index >= size)
+		throw VectorInvalidIndex();
+	return elements[index];
+}
+
+template<typename ValueType>
+TVector<ValueType>& TVector<ValueType>::operator=(const TVector& other)
+{
+	if (this != &other)
+	{
+		if (size != other.size)
+		{
+			size = other.size;
+			delete elements;
+			elements = new ValueType[size];
+		}
+		startIndex = other.startIndex;
+		memcpy(elements, other.elements, sizeof(ValueType) * size);
+	}
+	return *this;
 }
 
 template<typename ValueType>
@@ -236,24 +248,6 @@ void TVector<ValueType>::fill(ValueType value)
 		return;
 	for (size_t i = 0; i < size; i++)
 		elements[i] = value;
-}
-
-template<typename ValueType>
-const ValueType& TVector<ValueType>::operator[](size_t index) const
-{
-//	std::cout << "TVector::operator[]const index=" << index << '\n';
-	if (index - startIndex >= size)
-		throw std::out_of_range("olala");
-	return elements[index - startIndex];
-}
-
-template<typename ValueType>
-ValueType& TVector<ValueType>::operator[](size_t index)
-{
-//	std::cout << "TVector::operator[] index=" << index << '\n';
-	if (index - startIndex >= size)
-		throw std::out_of_range("olala");
-	return elements[index - startIndex];
 }
 
 #endif // !_TVECTOR_H_
