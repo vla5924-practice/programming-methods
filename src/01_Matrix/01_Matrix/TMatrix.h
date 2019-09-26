@@ -67,16 +67,14 @@ TMatrix<ValueType>::TMatrix(const TMatrix<ValueType>& other)
 template<typename ValueType>
 TMatrix<ValueType>::TMatrix(const TVector<TVector<ValueType>>& vector) : TVector<TVector<ValueType>>(vector.getSize())
 {
-	bool isConvertible = true;
 	for (size_t i = 0; i < this->size; i++)
 		if (vector[i].getSize() != this->size - i)
 			throw MatrixNonConvertible();
-	TVector<TVector<ValueType>>& vectorRef = const_cast<TVector<TVector<ValueType>>&>(vector);
 	for (size_t i = 0; i < this->size; i++)
 	{
 		this->elements[i] = TVector<ValueType>(this->size - i, i);
 		for (size_t j = 0; j < this->size - i; j++)
-			this->elements[i].at(j) = vectorRef.at(i).at(j);
+			this->elements[i].at(j) = vector.at(i).at(j);
 	}
 }
 
