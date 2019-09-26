@@ -12,6 +12,7 @@ int main()
 	srand((unsigned)time(0));
 	size_t commonSize   = random<size_t>(2, 6), uncommonSize = random<size_t>(2, 6);
 	TVector<double> vectors[]  = { TVector<double>(commonSize), TVector<double>(uncommonSize) };
+	TVector <TVector<double>> vectorOfVectors(commonSize);
 	TMatrix<double> matrixes[] = { TMatrix<double>(commonSize), TMatrix<double>(commonSize),TMatrix<double>(uncommonSize),  TMatrix<double>(commonSize) };
 
 	enum Idx
@@ -34,6 +35,35 @@ int main()
 	std::cout << "Assignment B to other: \n";
 	std::cout << (matrixes[Idx::Result] = matrixes[Idx::B]);
 	matrixes[Idx::Result].fill(0.);
+
+	std::cout << "Generating convertible vector...\n";
+	for (size_t i = 0; i < commonSize; i++)
+	{
+		TVector<double> vector(commonSize - i);
+		for (size_t j = i; j < commonSize; j++)
+			vector[j - i] = random<double>(0., 10.);
+		vectorOfVectors[i] = vector;
+	}
+	std::cout << vectorOfVectors;
+	std::cout << "\nAssuming vector of vectors to matrix: \n";
+	try
+	{
+		std::cout << (matrixes[Idx::Result] = vectorOfVectors);
+	}
+	catch (MatrixNonConvertible& e)
+	{
+		std::cout << e.what();
+	}
+	vectorOfVectors[0] = TVector<double>(uncommonSize);
+	std::cout << "\nAssuming vector of vectors (with first row length of " << uncommonSize << " instead of "<< commonSize << ") to matrix: \n";
+	try
+	{
+		std::cout << (matrixes[Idx::Result] = vectorOfVectors);
+	}
+	catch (MatrixNonConvertible& e)
+	{
+		std::cout << e.what();
+	}
 
 	std::cout << "\nEquality (A == B): ";
 	if (matrixes[Idx::A] == matrixes[Idx::B])

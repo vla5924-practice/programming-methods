@@ -65,35 +65,19 @@ TMatrix<ValueType>::TMatrix(const TMatrix<ValueType>& other)
 }
 
 template<typename ValueType>
-TMatrix<ValueType>::TMatrix(const TVector<TVector<ValueType>>& vector) : TVector<TVector<ValueType>>(vector.size)
+TMatrix<ValueType>::TMatrix(const TVector<TVector<ValueType>>& vector) : TVector<TVector<ValueType>>(vector.getSize())
 {
-	bool isConvertible = true, isTrulyTriangle = false;
+	bool isConvertible = true;
 	for (size_t i = 0; i < this->size; i++)
-		if (vector[i].getSize() != this->size)
-		{
-			isConvertible &= false;
-			break;
-		}
-	if (!isConvertible)
+		if (vector[i].getSize() != this->size - i)
+			throw MatrixNonConvertible();
+	TVector<TVector<ValueType>>& vectorRef = const_cast<TVector<TVector<ValueType>>&>(vector);
+	for (size_t i = 0; i < this->size; i++)
 	{
-		isConvertible = true;
-		for (size_t i = 0; i < this->size; i++)
-			if (vector[i].getSize() != this->size - i)
-			{
-				isConvertible &= false;
-				break;
-			}
-		isTrulyTriangle = true;
+		this->elements[i] = TVector<ValueType>(this->size - i, i);
+		for (size_t j = 0; j < this->size - i; j++)
+			this->elements[i].at(j) = vectorRef.at(i).at(j);
 	}
-	if (!isConvertible)
-		throw MatrixNonConvertible();
-	if (isTrulyTriangle)
-		for (size_t i = 0; i < this->size; i++)
-			this->elements[i] = vector.elements[i];
-	else
-		for (size_t i = 0; i < this->size; i++)
-			for(size_t j = 0; j < this->size - i; j++)
-				this->elements[i][j] = vector.elements[i][j + i];
 }
 
 template<typename ValueType>

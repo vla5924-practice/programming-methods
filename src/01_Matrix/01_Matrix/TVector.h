@@ -35,7 +35,7 @@ public:
 
 	size_t getSize() const;
 	size_t getStartIndex() const;
-	ValueType& getValue(size_t index);
+	ValueType& at(size_t index);
 
 	ValueType& operator[](size_t index);
 	const ValueType& operator[](size_t index) const;
@@ -221,7 +221,7 @@ const ValueType& TVector<ValueType>::operator[](size_t index) const
 }
 
 template<typename ValueType>
-ValueType& TVector<ValueType>::getValue(size_t index)
+ValueType& TVector<ValueType>::at(size_t index)
 {
 	if (index >= size)
 		throw VectorInvalidIndex();
