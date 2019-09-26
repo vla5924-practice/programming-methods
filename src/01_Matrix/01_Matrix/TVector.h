@@ -23,6 +23,7 @@ public:
 	bool operator==(const TVector& other) const;
 	bool operator!=(const TVector& other) const;
 
+	TVector& operator=(const TVector& other);
 	TVector operator+(ValueType value);
 	TVector operator-(ValueType value);
 	TVector operator*(ValueType value);
@@ -39,7 +40,6 @@ public:
 
 	ValueType& operator[](size_t index);
 	const ValueType& operator[](size_t index) const;
-	TVector& operator=(const TVector& other);
 
 	void fillRandomly(ValueType valuesFrom = ValueType(0), ValueType valuesTo = ValueType(1));
 	void fill(ValueType value = ValueType(0));
