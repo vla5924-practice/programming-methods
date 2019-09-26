@@ -107,6 +107,23 @@ bool TVector<ValueType>::operator!=(const TVector& other) const
 }
 
 template<typename ValueType>
+TVector<ValueType>& TVector<ValueType>::operator=(const TVector& other)
+{
+	if (this != &other)
+	{
+		if (size != other.size)
+		{
+			size = other.size;
+			delete[] elements;
+			elements = new ValueType[size];
+		}
+		startIndex = other.startIndex;
+		memcpy(elements, other.elements, sizeof(ValueType) * size);
+	}
+	return *this;
+}
+
+template<typename ValueType>
 TVector<ValueType> TVector<ValueType>::operator+(ValueType value)
 {
 	TVector<ValueType> result(*this);
@@ -209,23 +226,6 @@ ValueType& TVector<ValueType>::getValue(size_t index)
 	if (index >= size)
 		throw VectorInvalidIndex();
 	return elements[index];
-}
-
-template<typename ValueType>
-TVector<ValueType>& TVector<ValueType>::operator=(const TVector& other)
-{
-	if (this != &other)
-	{
-		if (size != other.size)
-		{
-			size = other.size;
-			delete elements;
-			elements = new ValueType[size];
-		}
-		startIndex = other.startIndex;
-		memcpy(elements, other.elements, sizeof(ValueType) * size);
-	}
-	return *this;
 }
 
 template<typename ValueType>
