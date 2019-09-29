@@ -152,10 +152,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="02_Stack.cpp" />
-    <ClCompile Include="PNProcessor.cpp" />
+    <ClCompile Include="PostfixFormProcessor.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PNProcessor.h" />
+    <ClInclude Include="PostfixFormProcessor.h" />
     <ClInclude Include="TStack.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

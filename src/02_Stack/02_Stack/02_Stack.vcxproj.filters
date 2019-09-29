@@ -18,15 +18,15 @@
     <ClCompile Include="02_Stack.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="PNProcessor.cpp">
+    <ClCompile Include="PostfixFormProcessor.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PNProcessor.h">
+    <ClInclude Include="TStack.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="TStack.h">
+    <ClInclude Include="PostfixFormProcessor.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
