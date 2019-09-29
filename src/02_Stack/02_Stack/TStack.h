@@ -19,6 +19,7 @@ public:
 	ValueType pop();
 
 	size_t height() const;
+	size_t capacity() const;
 	bool empty() const;
 	bool full() const;
 };
@@ -74,6 +75,12 @@ template<typename ValueType>
 size_t TStack<ValueType>::height() const
 {
 	return nextEmpty;
+}
+
+template<typename ValueType>
+size_t TStack<ValueType>::capacity() const
+{
+	return size;
 }
 
 template<typename ValueType>

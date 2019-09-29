@@ -39,6 +39,8 @@ private:
 	static Priority checkPriority(const char first, const char second);
 	static Variable findVariableByName(const Variables variables, const char name);
 public:
+	static std::string findVariables(const std::string& expression);
+	static bool checkExpression(const std::string& expression);
 	static std::string parse(const std::string& expression);
 	static double calculate(const std::string& postfixForm, const Variables variables);
 };

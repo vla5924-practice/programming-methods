@@ -69,12 +69,48 @@ PostfixFormProcessor::Variable PostfixFormProcessor::findVariableByName(const Va
 	return Variable();
 }
 
+std::string PostfixFormProcessor::findVariables(const std::string& expression)
+{
+	if (!checkExpression(expression))
+		throw "olala"; // cannot found in bad exp
+	std::string variablesNames;
+	for (std::string::const_iterator token = expression.begin(); token != expression.end(); token++)
+	{
+		TokenType type = checkToken(*token);
+		if (type == TokenType::operand)
+		{
+			bool isFirstTime = true;
+			for (std::string::const_iterator prevToken = expression.begin(); prevToken != token; prevToken++)
+				if (*token == *prevToken)
+					isFirstTime = false;
+			if (isFirstTime)
+				variablesNames += *token;
+		}
+	}
+	return variablesNames;
+}
+
+bool PostfixFormProcessor::checkExpression(const std::string& expression)
+{
+	try
+	{
+		if (countPostfixFormLength(expression))
+			return true;
+		return false;
+	}
+	catch (...)
+	{
+		return false;
+	}
+	return true;
+}
+
 std::string PostfixFormProcessor::parse(const std::string& expression)
 {
 	size_t postfixFormLength = countPostfixFormLength(expression);
 	size_t operationsCount = countOperations(expression);
 	TStack<char> postfixForm(postfixFormLength), operations(operationsCount);
-	for (const char* token = expression.c_str(); token; token++)
+	for (std::string::const_iterator token = expression.begin(); token != expression.end(); token++)
 	{
 		TokenType type = checkToken(*token);
 		if (type == TokenType::operand)
