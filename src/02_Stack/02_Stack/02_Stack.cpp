@@ -31,14 +31,16 @@ int main()
 	catch (...)
 	{
 		std::cerr << "error\n";
+		return 1;
 	}
 	try
 	{
 		double result = PostfixFormProcessor::calculate(postfixForm, variables);
-		std::cout << "Result of expression calculation: " << result;
+		std::cout << "\nResult of expression calculation: " << result;
 	}
 	catch (...)
 	{
 		std::cerr << "error\n";
+		return 2;
 	}
 }

@@ -16,7 +16,7 @@ PostfixFormProcessor::TokenType PostfixFormProcessor::checkToken(const char toke
 size_t PostfixFormProcessor::countPostfixFormLength(const std::string& expression)
 {
 	size_t count = 0;
-	for (const char* token = expression.c_str(); token; token++)
+	for (std::string::const_iterator token = expression.begin(); token != expression.end(); token++)
 	{
 		TokenType type = checkToken(*token);
 		if (type == TokenType::unknown)
@@ -32,7 +32,7 @@ size_t PostfixFormProcessor::countPostfixFormLength(const std::string& expressio
 size_t PostfixFormProcessor::countOperations(const std::string& expression)
 {
 	size_t count = 0;
-	for (const char* token = expression.c_str(); token; token++)
+	for (std::string::const_iterator token = expression.begin(); token != expression.end(); token++)
 	{
 		TokenType type = checkToken(*token);
 		if (type == TokenType::unknown)
@@ -119,14 +119,18 @@ std::string PostfixFormProcessor::parse(const std::string& expression)
 			operations.push(*token);
 		else if (type == TokenType::closingBrace)
 		{
+			if (operations.height() > 0)
+				while (checkPriority(*token, operations.top()) == Priority::lower)
+					postfixForm.push(operations.pop());
 			while (operations.top() != '(')
 				postfixForm.push(operations.pop());
 			operations.pop(); // remove '('
 		}
 		else if (type == TokenType::operation)
 		{
-			while (checkPriority(*token, operations.top()) == Priority::higher)
-				postfixForm.push(operations.pop());
+			if(operations.height() > 0)
+				while (checkPriority(*token, operations.top()) == Priority::lower)
+					postfixForm.push(operations.pop());
 			operations.push(*token);
 		}
 		else
@@ -135,8 +139,8 @@ std::string PostfixFormProcessor::parse(const std::string& expression)
 	while (!operations.empty())
 		postfixForm.push(operations.pop());
 	std::string result;
-	result.reserve(postfixForm.height());
-	for (std::string::iterator i = result.begin(); !postfixForm.empty(); i++)
+	result.resize(postfixForm.height(), 0);
+	for (std::string::reverse_iterator i = result.rbegin(); !postfixForm.empty(); i++)
 		*i = postfixForm.pop();
 	return result;
 }
