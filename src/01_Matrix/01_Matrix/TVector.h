@@ -36,8 +36,8 @@ public:
 
 	size_t getSize() const;
 	size_t getStartIndex() const;
-	ValueType& at(size_t index);
-	const ValueType& at(size_t index) const;
+	//ValueType& at(size_t index);
+	//const ValueType& at(size_t index) const;
 
 	ValueType& operator[](size_t index);
 	const ValueType& operator[](size_t index) const;
@@ -79,7 +79,8 @@ TVector<ValueType>::TVector(const TVector& other)
 {
 	size = other.size;
 	elements = new ValueType[size];
-	memcpy(elements, other.elements, sizeof(ValueType) * size);
+	for (size_t i = 0; i < size; i++)
+		elements[i] = other.elements[i];
 	startIndex = other.startIndex;
 }
 
@@ -93,8 +94,8 @@ TVector<ValueType>::~TVector()
 template<typename ValueType>
 bool TVector<ValueType>::operator==(const TVector& other) const
 {
-	if (size != other.size)
-		throw VectorDifferentSizes();
+	if ((size != other.size) || (startIndex != other.startIndex))
+		return false;
 	for (size_t i = 0; i < size; i++)
 		if (elements[i] != other.elements[i])
 			return false;
@@ -119,7 +120,8 @@ TVector<ValueType>& TVector<ValueType>::operator=(const TVector& other)
 			elements = new ValueType[size];
 		}
 		startIndex = other.startIndex;
-		memcpy(elements, other.elements, sizeof(ValueType) * size);
+		for (size_t i = 0; i < size; i++)
+			elements[i] = other.elements[i];
 	}
 	return *this;
 }
@@ -129,7 +131,7 @@ TVector<ValueType> TVector<ValueType>::operator+(ValueType value)
 {
 	TVector<ValueType> result(*this);
 	for (size_t i = 0; i < result.size; i++)
-		result.elements[i] = elements[i] + value;
+		result.elements[i] += value;
 	return result;
 }
 
@@ -138,7 +140,7 @@ TVector<ValueType> TVector<ValueType>::operator-(ValueType value)
 {
 	TVector<ValueType> result(*this);
 	for (size_t i = 0; i < result.size; i++)
-		result.elements[i] = result.elements[i] - value;
+		result.elements[i] -= value;
 	return result;
 }
 
@@ -147,7 +149,7 @@ TVector<ValueType> TVector<ValueType>::operator*(ValueType value)
 {
 	TVector<ValueType> result(*this);
 	for (size_t i = 0; i < result.size; i++)
-		result.elements[i] = result.elements[i] * value;
+		result.elements[i] *= value;
 	return result;
 }
 
@@ -158,7 +160,7 @@ TVector<ValueType> TVector<ValueType>::operator+(const TVector& other)
 		throw VectorDifferentSizes();
 	TVector<ValueType> result(*this);
 	for (size_t i = 0; i < size; i++)
-		result.elements[i] = other.elements[i] + result.elements[i];
+		result.elements[i] += other.elements[i];
 	return result;
 }
 
@@ -169,7 +171,7 @@ TVector<ValueType> TVector<ValueType>::operator-(const TVector& other)
 		throw VectorDifferentSizes();
 	TVector<ValueType> result(*this);
 	for (size_t i = 0; i < size; i++)
-		result.elements[i] = result.elements[i] - other.elements[i];
+		result.elements[i] -= other.elements[i];
 	return result;
 }
 
@@ -180,7 +182,7 @@ ValueType TVector<ValueType>::operator*(const TVector& other)
 		throw VectorDifferentSizes();
 	ValueType result(0);
 	for (size_t i = 0; i < size; i++)
-		result = result + elements[i] * other.elements[i];
+		result += elements[i] * other.elements[i];
 	return result;
 }
 
@@ -190,7 +192,7 @@ ValueType TVector<ValueType>::length() const
 	ValueType result(0);
 	for (size_t i = 0; i < size; i++)
 		result += elements[i] * elements[i];
-	return sqrt(result);
+	return sqrtf(result);
 }
 
 template<typename ValueType>
@@ -221,21 +223,21 @@ const ValueType& TVector<ValueType>::operator[](size_t index) const
 	return elements[index - startIndex];
 }
 
-template<typename ValueType>
+/*template<typename ValueType>
 ValueType& TVector<ValueType>::at(size_t index)
 {
 	if (index >= size)
 		throw VectorInvalidIndex();
 	return elements[index];
-}
+}*/
 
-template<typename ValueType>
+/*template<typename ValueType>
 const ValueType& TVector<ValueType>::at(size_t index) const
 {
 	if (index >= size)
 		throw VectorInvalidIndex();
 	return elements[index];
-}
+}*/
 
 template<typename ValueType>
 void TVector<ValueType>::fillRandomly(ValueType valuesFrom, ValueType valuesTo)

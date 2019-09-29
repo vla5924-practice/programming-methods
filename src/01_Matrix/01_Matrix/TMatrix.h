@@ -24,7 +24,7 @@ public:
 	TMatrix operator*(const TMatrix& other);
 	TVector<ValueType> operator*(const TVector<ValueType>& other);
 
-	ValueType determinant();
+	ValueType determinant() const;
 	void fillRandomly(ValueType valuesFrom = ValueType(0), ValueType valuesTo = ValueType(1));
 	void fill(ValueType value = ValueType(0));
 
@@ -40,7 +40,7 @@ public:
 	{
 		if (matrix.size == 0)
 			return inputStream;
-		for (size_t i = 0; i < matrix.size - 1; i++)
+		for (size_t i = 0; i < matrix.size; i++)
 			inputStream >> matrix.elements[i];
 		return inputStream;
 	}
@@ -64,7 +64,7 @@ TMatrix<ValueType>::TMatrix(const TMatrix<ValueType>& other)
 		this->elements[i] = other.elements[i];
 }
 
-template<typename ValueType>
+/*template<typename ValueType>
 TMatrix<ValueType>::TMatrix(const TVector<TVector<ValueType>>& vector) : TVector<TVector<ValueType>>(vector.getSize())
 {
 	for (size_t i = 0; i < this->size; i++)
@@ -76,13 +76,20 @@ TMatrix<ValueType>::TMatrix(const TVector<TVector<ValueType>>& vector) : TVector
 		for (size_t j = 0; j < this->size - i; j++)
 			this->elements[i].at(j) = vector.at(i).at(j);
 	}
+}*/
+
+template<typename ValueType>
+TMatrix<ValueType>::TMatrix(const TVector<TVector<ValueType>>& vector) 
+	: TVector<TVector<ValueType>>(vector)
+{
+	
 }
 
 template<typename ValueType>
 bool TMatrix<ValueType>::operator==(const TMatrix<ValueType>& other) const
 {
 	if (this->size != other.size)
-		throw MatrixDifferentSizes();
+		return false;
 	for (size_t i = 0; i < other.size; i++)
 		if (this->elements[i] != other.elements[i])
 			return false;
@@ -117,7 +124,7 @@ TMatrix<ValueType> TMatrix<ValueType>::operator+(ValueType value)
 {
 	TMatrix<ValueType> result(*this);
 	for (size_t i = 0; i < result.size; i++)
-		result.elements[i] = this->elements[i] + value;
+		result.elements[i] = result.elements[i] + value;
 	return result;
 }
 
@@ -200,7 +207,7 @@ TVector<ValueType> TMatrix<ValueType>::operator*(const TVector<ValueType>& other
 }
 
 template<typename ValueType>
-ValueType TMatrix<ValueType>::determinant()
+ValueType TMatrix<ValueType>::determinant() const
 {
 	ValueType result(1);
 	for (size_t i = 0; i < this->size; i++)
