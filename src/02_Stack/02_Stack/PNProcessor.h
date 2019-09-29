@@ -6,6 +6,15 @@
 
 class PNProcessor
 {
+	enum class TokenType
+	{
+		unknown,
+		operand,
+		operation,
+		bracket,
+		space
+	};
+	static TokenType checkToken(char token);
 public:
 	struct Variable
 	{

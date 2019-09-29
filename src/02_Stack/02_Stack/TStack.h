@@ -18,6 +18,7 @@ public:
 	ValueType top() const;
 	ValueType pop();
 
+	size_t height() const;
 	bool empty() const;
 	bool full() const;
 };
@@ -67,6 +68,12 @@ ValueType TStack<ValueType>::pop()
 	if (empty())
 		throw "olala";
 	return elements[--nextEmpty];
+}
+
+template<typename ValueType>
+size_t TStack<ValueType>::height() const
+{
+	return nextEmpty;
 }
 
 template<typename ValueType>
