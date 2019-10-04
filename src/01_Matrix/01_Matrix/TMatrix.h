@@ -56,33 +56,21 @@ TMatrix<ValueType>::TMatrix(size_t size) : TVector<TVector<ValueType>>(size)
 }
 
 template<typename ValueType>
-TMatrix<ValueType>::TMatrix(const TMatrix<ValueType>& other)
+TMatrix<ValueType>::TMatrix(const TMatrix<ValueType>& other) : TVector<TVector<ValueType>>(other)
 {
-	this->size = other.size;
+	/*this->size = other.size;
 	this->elements = new TVector<ValueType>[other.size];
 	for (size_t i = 0; i < other.size; i++)
-		this->elements[i] = other.elements[i];
+		this->elements[i] = other.elements[i];*/
 }
-
-/*template<typename ValueType>
-TMatrix<ValueType>::TMatrix(const TVector<TVector<ValueType>>& vector) : TVector<TVector<ValueType>>(vector.getSize())
-{
-	for (size_t i = 0; i < this->size; i++)
-		if (vector[i].getSize() != this->size - i)
-			throw MatrixNonConvertible();
-	for (size_t i = 0; i < this->size; i++)
-	{
-		this->elements[i] = TVector<ValueType>(this->size - i, i);
-		for (size_t j = 0; j < this->size - i; j++)
-			this->elements[i].at(j) = vector.at(i).at(j);
-	}
-}*/
 
 template<typename ValueType>
 TMatrix<ValueType>::TMatrix(const TVector<TVector<ValueType>>& vector) 
 	: TVector<TVector<ValueType>>(vector)
 {
-	
+	for (size_t i = 0; i < this->size; i++)
+		if (vector[i].getSize() != this->size - i)
+			throw MatrixNonConvertible();
 }
 
 template<typename ValueType>

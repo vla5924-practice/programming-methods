@@ -36,7 +36,7 @@ int main()
 	std::cout << (matrixes[Idx::Result] = matrixes[Idx::B]);
 	matrixes[Idx::Result].fill(0.);
 
-	std::cout << "Generating convertible vector...\n";
+	std::cout << "\nGenerating convertible vector...\n";
 	for (size_t i = 0; i < commonSize; i++)
 	{
 		TVector<double> vector(commonSize - i, i);
