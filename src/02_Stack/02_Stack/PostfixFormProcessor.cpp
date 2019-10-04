@@ -105,6 +105,22 @@ bool PostfixFormProcessor::checkExpression(const std::string& expression)
 {
 	try
 	{
+		TokenType prev = TokenType::unknown;
+		unsigned openingBracesCount = 0, closingBracesCount = 0;
+		for (std::string::const_iterator token = expression.begin(); token != expression.end(); token++)
+		{
+			TokenType current = checkToken(*token);
+			if (current == TokenType::closingBrace)
+				closingBracesCount++;
+			else if (*token == '(')
+				openingBracesCount++;
+			if((current == TokenType::operand) || (current == TokenType::operation))
+				if ((current == prev) && (*token != '('))
+					return false;
+			prev = current;
+		}
+		if (closingBracesCount != openingBracesCount)
+			return false;
 		if (countPostfixFormLength(expression) && countOperations(expression))
 			return true;
 		return false;
@@ -118,6 +134,8 @@ bool PostfixFormProcessor::checkExpression(const std::string& expression)
 
 std::string PostfixFormProcessor::parse(const std::string& expression, bool testFinally)
 {
+	if(!checkExpression(expression))
+		throw InvalidExpressionError();
 	size_t postfixFormLength = countPostfixFormLength(expression);
 	size_t operationsCount = countOperations(expression);
 	TStack<char> postfixForm(postfixFormLength), operations(operationsCount);
@@ -129,11 +147,15 @@ std::string PostfixFormProcessor::parse(const std::string& expression, bool test
 		if (type == TokenType::operand)
 			postfixForm.push(*token);
 		else if (*token == '(')
-			operations.push(*token);
+		{
+				operations.push(*token);
+		}
 		else if (type == TokenType::closingBrace)
 		{
 			while (operations.top() != '(')
-				postfixForm.push(operations.pop());
+			{
+					operations.push(operations.top());
+			}
 			if (!operations.empty())
 				operations.pop(); // remove '('
 		}
