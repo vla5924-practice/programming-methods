@@ -5,7 +5,7 @@ int main()
 {
 	std::string expression;
 	std::cout << "Enter your expression: ";
-	std::cin >> expression;
+	std::getline(std::cin, expression, '\n');
 	if (!PostfixFormProcessor::checkExpression(expression))
 	{
 		std::cout << "Invalid expression.\n";
@@ -28,9 +28,9 @@ int main()
 		postfixForm = PostfixFormProcessor::parse(expression);
 		std::cout << "Postfix form: " << postfixForm;
 	}
-	catch (...)
+	catch (PostfixFormProcessor::InvalidExpressionError& e)
 	{
-		std::cerr << "error\n";
+		std::cerr << e.what() << '\n';
 		return 1;
 	}
 	try
@@ -38,9 +38,9 @@ int main()
 		double result = PostfixFormProcessor::calculate(postfixForm, variables);
 		std::cout << "\nResult of expression calculation: " << result;
 	}
-	catch (...)
+	catch (PostfixFormProcessor::InvalidPostfixFormError& e)
 	{
-		std::cerr << "error\n";
+		std::cerr << e.what() << '\n';
 		return 2;
 	}
 }

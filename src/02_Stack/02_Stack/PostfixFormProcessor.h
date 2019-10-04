@@ -28,9 +28,8 @@ private:
 	};
 	enum class Priority
 	{
-		equal,
-		higher,
-		lower,
+		notLower,
+		notHigher,
 		unknown
 	};
 	static TokenType checkToken(const char token);
@@ -42,7 +41,33 @@ public:
 	static std::string findVariables(const std::string& expression);
 	static bool checkExpression(const std::string& expression);
 	static std::string parse(const std::string& expression);
+	static bool test(const std::string& postfixForm);
 	static double calculate(const std::string& postfixForm, const Variables variables);
+
+	class InvalidExpressionError : std::exception
+	{
+		const std::string whatStr = "Expression is invalid.";
+	public:
+		virtual const char* what() { return whatStr.c_str(); }
+	};
+	class InvalidPostfixFormError : InvalidExpressionError
+	{
+		const std::string whatStr = "Postfix form is invalid.";
+	public:
+		virtual const char* what() { return whatStr.c_str(); }
+	};
+	class UndefinedVariable : std::exception
+	{
+		const std::string whatStr = "Variable not defined in variables array.";
+	public:
+		virtual const char* what() { return whatStr.c_str(); }
+	};
+	class DivisionByZero : std::exception
+	{
+		const std::string whatStr = "Cannot divide by zero.";
+	public:
+		virtual const char* what() { return whatStr.c_str(); }
+	};
 };
 
 #endif // !_POSTFIXFORMPROCESSOR_H_

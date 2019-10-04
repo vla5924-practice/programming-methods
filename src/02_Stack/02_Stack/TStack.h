@@ -1,7 +1,9 @@
 #ifndef _TSTACK_H_
 #define _TSTACK_H_
 
+#include <string>
 #include <cstring>
+#include <exception>
 
 template <typename ValueType>
 class TStack
@@ -22,6 +24,19 @@ public:
 	size_t capacity() const;
 	bool empty() const;
 	bool full() const;
+
+	class FullError : std::exception
+	{
+		const std::string whatStr = "Stack is full.";
+	public:
+		virtual const char* what() { return whatStr.c_str(); }
+	};
+	class EmptyError : std::exception
+	{
+		const std::string whatStr = "Stack is empty.";
+	public:
+		virtual const char* what() { return whatStr.c_str(); }
+	};
 };
 
 
@@ -50,7 +65,7 @@ template<typename ValueType>
 TStack<ValueType>& TStack<ValueType>::push(ValueType value)
 {
 	if (full())
-		throw "olala";
+		throw FullError();
 	elements[nextEmpty++] = value;
 	return *this;
 }
@@ -59,7 +74,7 @@ template<typename ValueType>
 ValueType TStack<ValueType>::top() const
 {
 	if (empty())
-		throw "olala";
+		throw EmptyError();
 	return elements[nextEmpty - 1];
 }
 
@@ -67,7 +82,7 @@ template<typename ValueType>
 ValueType TStack<ValueType>::pop()
 {
 	if (empty())
-		throw "olala";
+		throw EmptyError();
 	return elements[--nextEmpty];
 }
 
