@@ -39,9 +39,9 @@ int main()
 	std::cout << "Generating convertible vector...\n";
 	for (size_t i = 0; i < commonSize; i++)
 	{
-		TVector<double> vector(commonSize - i);
+		TVector<double> vector(commonSize - i, i);
 		for (size_t j = i; j < commonSize; j++)
-			vector[j - i] = random<double>(0., 10.);
+			vector[j] = random<double>(0., 10.);
 		vectorOfVectors[i] = vector;
 	}
 	std::cout << vectorOfVectors;
