@@ -105,7 +105,7 @@ bool PostfixFormProcessor::checkExpression(const std::string& expression)
 {
 	try
 	{
-		if (countPostfixFormLength(expression))
+		if (countPostfixFormLength(expression) && countOperations(expression))
 			return true;
 		return false;
 	}
@@ -116,7 +116,7 @@ bool PostfixFormProcessor::checkExpression(const std::string& expression)
 	return true;
 }
 
-std::string PostfixFormProcessor::parse(const std::string& expression)
+std::string PostfixFormProcessor::parse(const std::string& expression, bool testFinally)
 {
 	size_t postfixFormLength = countPostfixFormLength(expression);
 	size_t operationsCount = countOperations(expression);
@@ -157,6 +157,9 @@ std::string PostfixFormProcessor::parse(const std::string& expression)
 	result.resize(postfixForm.height(), 0);
 	for (std::string::reverse_iterator i = result.rbegin(); !postfixForm.empty(); i++)
 		*i = postfixForm.pop();
+	if(testFinally)
+		if (!test(result))
+			throw InvalidExpressionError();
 	return result;
 }
 

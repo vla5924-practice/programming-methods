@@ -40,7 +40,7 @@ private:
 public:
 	static std::string findVariables(const std::string& expression);
 	static bool checkExpression(const std::string& expression);
-	static std::string parse(const std::string& expression);
+	static std::string parse(const std::string& expression, bool testFinally = false);
 	static bool test(const std::string& postfixForm);
 	static double calculate(const std::string& postfixForm, const Variables variables);
 

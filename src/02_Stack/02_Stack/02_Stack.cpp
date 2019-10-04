@@ -11,6 +11,17 @@ int main()
 		std::cout << "Invalid expression.\n";
 		return 0;
 	}
+	std::string postfixForm;
+	try
+	{
+		postfixForm = PostfixFormProcessor::parse(expression, true);
+		std::cout << "Postfix form: " << postfixForm;
+	}
+	catch (PostfixFormProcessor::InvalidExpressionError& e)
+	{
+		std::cerr << e.what() << '\n';
+		return 1;
+	}
 	std::string variablesNames = PostfixFormProcessor::findVariables(expression);
 	PostfixFormProcessor::Variables variables;
 	variables.variables = new PostfixFormProcessor::Variable[variables.count = variablesNames.size()];
@@ -21,17 +32,6 @@ int main()
 		std::cout << "Enter \'" << *variableName << "\' value: ";
 		std::cin >> variables.variables[i].value;
 		i++;
-	}
-	std::string postfixForm;
-	try
-	{
-		postfixForm = PostfixFormProcessor::parse(expression);
-		std::cout << "Postfix form: " << postfixForm;
-	}
-	catch (PostfixFormProcessor::InvalidExpressionError& e)
-	{
-		std::cerr << e.what() << '\n';
-		return 1;
 	}
 	try
 	{
