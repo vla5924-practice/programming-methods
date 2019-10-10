@@ -43,4 +43,7 @@ int main()
 		std::cerr << e.what() << '\n';
 		return 3;
 	}
+	delete[] variables.variables;
+	variables.variables = nullptr;
+	variables.count = 0ull;
 }

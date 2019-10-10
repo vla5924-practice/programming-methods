@@ -154,7 +154,7 @@ std::string PostfixFormProcessor::parse(const std::string& expression, bool test
 		{
 			while (operations.top() != '(')
 			{
-					operations.push(operations.top());
+					operations.push(operations.pop());
 			}
 			if (!operations.empty())
 				operations.pop(); // remove '('
