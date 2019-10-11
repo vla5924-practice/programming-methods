@@ -82,7 +82,7 @@ namespace ForwardList
 		Node<KeyType, ValueType>* temp = first;
 		while (temp->next && (temp->next->key != key))
 			temp = temp->next;
-		if (temp->next == nullptr)
+		if (!temp->next)
 			return;
 		Node<KeyType, ValueType>* node = new Node<KeyType, ValueType>;
 		node->key = newKey;
@@ -103,17 +103,13 @@ namespace ForwardList
 			return;
 		}
 		Node<KeyType, ValueType>* temp = first;
-		while (temp->next)
-		{
-			if (temp->next->key == key)
-			{
-				Node<KeyType, ValueType>* node = temp->next;
-				temp->next = temp->next->next;
-				delete node;
-				return;
-			}
+		while (temp->next && (temp->next->key != key))
 			temp = temp->next;
-		}
+		if (!temp->next)
+			return;
+		Node<KeyType, ValueType>* node = temp->next;
+		temp->next = node->next;
+		delete node;
 	}
 
 	template<typename KeyType, typename ValueType>
