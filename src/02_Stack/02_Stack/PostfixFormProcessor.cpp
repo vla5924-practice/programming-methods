@@ -13,38 +13,6 @@ PostfixFormProcessor::TokenType PostfixFormProcessor::checkToken(const char toke
 	return TokenType::unknown;
 }
 
-size_t PostfixFormProcessor::countPostfixFormLength(const std::string& expression)
-{
-	size_t count = 0;
-	for (std::string::const_iterator token = expression.begin(); token != expression.end(); token++)
-	{
-		TokenType type = checkToken(*token);
-		if (type == TokenType::unknown)
-			throw InvalidExpressionError();
-		else if ((type == TokenType::operand) || ((type == TokenType::operation) && *token != '('))
-			count++;
-		else
-			continue;
-	}
-	return count;
-}
-
-size_t PostfixFormProcessor::countOperations(const std::string& expression)
-{
-	size_t count = 0;
-	for (std::string::const_iterator token = expression.begin(); token != expression.end(); token++)
-	{
-		TokenType type = checkToken(*token);
-		if (type == TokenType::unknown)
-			throw InvalidExpressionError();
-		else if (type == TokenType::operation)
-			count++;
-		else
-			continue;
-	}
-	return count;
-}
-
 PostfixFormProcessor::Priority PostfixFormProcessor::checkPriority(const char first, const char second)
 {
 	if ((checkToken(first) != TokenType::operation) || (checkToken(second) != TokenType::operation))
@@ -101,61 +69,51 @@ std::string PostfixFormProcessor::findVariables(const std::string& expression)
 	return variablesNames;
 }
 
-bool PostfixFormProcessor::checkExpression(const std::string& expression)
+bool PostfixFormProcessor::checkExpression(const std::string& exp)
 {
-	try
+    std::string expression = exp.substr(exp.find_first_not_of(' '));
+	unsigned openingBracesCount = 0, closingBracesCount = 0;
+    size_t i = 0;
+    TokenType prev = checkToken(expression[0]);
+    if ((prev != TokenType::operand) && (expression[0] != '('))
+        return false;
+    if (expression[0] == '(')
+        openingBracesCount++;
+	for (std::string::const_iterator token = ++expression.begin(); token != expression.end(); token++, i++)
 	{
-		unsigned openingBracesCount = 0, closingBracesCount = 0;
-        size_t i = 0;
-        TokenType prev = checkToken(expression[0]);
-        if ((prev != TokenType::operand) && (expression[0] != '('))
-            return false;
-		for (std::string::const_iterator token = ++expression.begin(); token != expression.end(); token++, i++)
+		TokenType current = checkToken(*token);
+        if (current == TokenType::space)
+            continue;
+		if (current == TokenType::closingBrace)
 		{
-			TokenType current = checkToken(*token);
-            if (current == TokenType::space)
-                continue;
-			if (current == TokenType::closingBrace)
-			{
-				closingBracesCount++;
-                if (prev != TokenType::operand)
-                    return false;
-				if (openingBracesCount < closingBracesCount)
-					return false;
-			}
-            else if (*token == '(')
-            {
-                openingBracesCount++;
-                if (prev != TokenType::operation)
-                    return false;
-            }
-			//if((current == TokenType::operand) || (current == TokenType::operation))
-			//	if ((current == prev) && (*token != '('))
-			//		return false;
-            else if (current == TokenType::operand)
-            {
-                if (prev != TokenType::operation)
-                    return false;
-            }
-            else if (current == TokenType::operation)
-            {
-                if (prev != TokenType::operand)
-                    return false;
-            }
-			prev = current;
+			closingBracesCount++;
+            if (prev != TokenType::operand)
+                return false;
+			if (openingBracesCount < closingBracesCount)
+				return false;
 		}
-        if (prev == TokenType::operation)
-            return false;
-		if (closingBracesCount != openingBracesCount)
-			return false;
-		//if (!countPostfixFormLength(expression) || !countOperations(expression))
-		//	return false;
-		return true;
+        else if (*token == '(')
+        {
+            openingBracesCount++;
+            if (prev != TokenType::operation)
+                return false;
+        }
+        else if (current == TokenType::operand)
+        {
+            if (prev != TokenType::operation)
+                return false;
+        }
+        else if (current == TokenType::operation)
+        {
+            if ((prev != TokenType::operand) && (prev != TokenType::closingBrace))
+                return false;
+        }
+		prev = current;
 	}
-	catch (InvalidExpressionError&)
-	{
+    if (prev == TokenType::operation)
+        return false;
+	if (closingBracesCount != openingBracesCount)
 		return false;
-	}
 	return true;
 }
 
@@ -163,9 +121,6 @@ std::string PostfixFormProcessor::parse(const std::string& expression)
 {
 	if(!checkExpression(expression))
 		throw InvalidExpressionError();
-	//size_t postfixFormLength = countPostfixFormLength(expression);
-	//size_t operationsCount = countOperations(expression);
-	//TStack<char> postfixForm(postfixFormLength), operations(operationsCount);
     TStack<char> postfixForm(expression.size()), operations(expression.size());
 	for (std::string::const_iterator token = expression.begin(); token != expression.end(); token++)
 	{
