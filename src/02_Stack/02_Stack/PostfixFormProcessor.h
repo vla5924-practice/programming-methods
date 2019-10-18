@@ -33,8 +33,6 @@ private:
 		unknown
 	};
 	static TokenType checkToken(const char token);
-	static size_t countPostfixFormLength(const std::string& expression);
-	static size_t countOperations(const std::string& expression);
 	static Priority checkPriority(const char first, const char second);
 	static Variable findVariableByName(const Variables variables, const char name);
 	static bool checkExpression(const std::string& expression);
