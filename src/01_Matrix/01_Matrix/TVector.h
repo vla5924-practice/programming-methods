@@ -111,7 +111,7 @@ bool TVector<ValueType>::operator!=(const TVector& other) const
 template<typename ValueType>
 TVector<ValueType>& TVector<ValueType>::operator=(const TVector& other)
 {
-	if (this != &other)
+	if (*this != other)
 	{
 		if (size != other.size)
 		{
