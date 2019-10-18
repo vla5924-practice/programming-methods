@@ -10,7 +10,7 @@ int main()
 	PostfixFormProcessor::Variables variables;
 	try
 	{
-		postfixForm = PostfixFormProcessor::parse(expression, true);
+		postfixForm = PostfixFormProcessor::parse(expression);
 		variablesNames = PostfixFormProcessor::findVariables(expression);
 		std::cout << "Postfix form: " << postfixForm << '\n';
 	}

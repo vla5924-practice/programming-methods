@@ -18,7 +18,7 @@ public:
 
 	TStack<ValueType>& push(ValueType value);
 	ValueType top() const;
-	ValueType pop();
+	void pop();
 
 	size_t height() const;
 	size_t capacity() const;
@@ -79,11 +79,11 @@ ValueType TStack<ValueType>::top() const
 }
 
 template<typename ValueType>
-ValueType TStack<ValueType>::pop()
+void TStack<ValueType>::pop()
 {
 	if (empty())
 		throw EmptyError();
-	return elements[--nextEmpty];
+	nextEmpty--;
 }
 
 template<typename ValueType>

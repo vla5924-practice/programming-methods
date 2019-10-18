@@ -105,25 +105,52 @@ bool PostfixFormProcessor::checkExpression(const std::string& expression)
 {
 	try
 	{
-		TokenType prev = TokenType::unknown;
 		unsigned openingBracesCount = 0, closingBracesCount = 0;
-		for (std::string::const_iterator token = expression.begin(); token != expression.end(); token++)
+        size_t i = 0;
+        TokenType prev = checkToken(expression[0]);
+        if ((prev != TokenType::operand) && (expression[0] != '('))
+            return false;
+		for (std::string::const_iterator token = ++expression.begin(); token != expression.end(); token++, i++)
 		{
 			TokenType current = checkToken(*token);
+            if (current == TokenType::space)
+                continue;
 			if (current == TokenType::closingBrace)
+			{
 				closingBracesCount++;
-			else if (*token == '(')
-				openingBracesCount++;
-			if((current == TokenType::operand) || (current == TokenType::operation))
-				if ((current == prev) && (*token != '('))
+                if (prev != TokenType::operand)
+                    return false;
+				if (openingBracesCount < closingBracesCount)
 					return false;
+			}
+            else if (*token == '(')
+            {
+                openingBracesCount++;
+                if (prev != TokenType::operation)
+                    return false;
+            }
+			//if((current == TokenType::operand) || (current == TokenType::operation))
+			//	if ((current == prev) && (*token != '('))
+			//		return false;
+            else if (current == TokenType::operand)
+            {
+                if (prev != TokenType::operation)
+                    return false;
+            }
+            else if (current == TokenType::operation)
+            {
+                if (prev != TokenType::operand)
+                    return false;
+            }
 			prev = current;
 		}
+        if (prev == TokenType::operation)
+            return false;
 		if (closingBracesCount != openingBracesCount)
 			return false;
-		if (countPostfixFormLength(expression) && countOperations(expression))
-			return true;
-		return false;
+		//if (!countPostfixFormLength(expression) || !countOperations(expression))
+		//	return false;
+		return true;
 	}
 	catch (InvalidExpressionError&)
 	{
@@ -132,13 +159,14 @@ bool PostfixFormProcessor::checkExpression(const std::string& expression)
 	return true;
 }
 
-std::string PostfixFormProcessor::parse(const std::string& expression, bool testFinally)
+std::string PostfixFormProcessor::parse(const std::string& expression)
 {
 	if(!checkExpression(expression))
 		throw InvalidExpressionError();
-	size_t postfixFormLength = countPostfixFormLength(expression);
-	size_t operationsCount = countOperations(expression);
-	TStack<char> postfixForm(postfixFormLength), operations(operationsCount);
+	//size_t postfixFormLength = countPostfixFormLength(expression);
+	//size_t operationsCount = countOperations(expression);
+	//TStack<char> postfixForm(postfixFormLength), operations(operationsCount);
+    TStack<char> postfixForm(expression.size()), operations(expression.size());
 	for (std::string::const_iterator token = expression.begin(); token != expression.end(); token++)
 	{
 		TokenType type = checkToken(*token);
@@ -154,7 +182,8 @@ std::string PostfixFormProcessor::parse(const std::string& expression, bool test
 		{
 			while (operations.top() != '(')
 			{
-					operations.push(operations.pop());
+				postfixForm.push(operations.top());
+				operations.pop();
 			}
 			if (!operations.empty())
 				operations.pop(); // remove '('
@@ -166,7 +195,10 @@ std::string PostfixFormProcessor::parse(const std::string& expression, bool test
 			else
 			{
 				while (!operations.empty() && (checkPriority(operations.top(), *token) == Priority::notLower))
-					postfixForm.push(operations.pop());
+				{
+					postfixForm.push(operations.top());
+					operations.pop();
+				}
 				operations.push(*token);
 			}
 		}
@@ -174,14 +206,23 @@ std::string PostfixFormProcessor::parse(const std::string& expression, bool test
 			throw InvalidExpressionError(); // something unknown
 	}
 	while (!operations.empty())
-		postfixForm.push(operations.pop());
-	std::string result;
-	result.resize(postfixForm.height(), 0);
-	for (std::string::reverse_iterator i = result.rbegin(); !postfixForm.empty(); i++)
-		*i = postfixForm.pop();
-	if(testFinally)
-		if (!test(result))
-			throw InvalidExpressionError();
+	{
+		postfixForm.push(operations.top());
+		operations.pop();
+	}
+	std::string reversedResult;
+    while (!postfixForm.empty())
+    {
+        reversedResult += postfixForm.top();
+        postfixForm.pop();
+    }
+    std::string result;
+	for (std::string::reverse_iterator i = reversedResult.rbegin(); i != reversedResult.rend(); i++)
+	{
+        result += *i;
+	}
+	if (!test(result))
+		throw InvalidExpressionError();
 	return result;
 }
 
@@ -198,8 +239,10 @@ bool PostfixFormProcessor::test(const std::string& postfixForm)
 			double first, second;
 			try
 			{
-				second = calculated.pop();
-				first = calculated.pop();
+				second = calculated.top();
+				calculated.pop();
+				first = calculated.top();
+				calculated.pop();
 			}
 			catch (TStack<double>::EmptyError&)
 			{
@@ -252,8 +295,10 @@ double PostfixFormProcessor::calculate(const std::string& postfixForm, const Var
 			double first, second;
 			try
 			{
-				second = calculated.pop();
-				first = calculated.pop();
+				second = calculated.top();
+				calculated.pop();
+				first = calculated.top();
+				calculated.pop();
 			}
 			catch (TStack<double>::EmptyError&)
 			{
@@ -280,7 +325,7 @@ double PostfixFormProcessor::calculate(const std::string& postfixForm, const Var
 	double result = 0.0;
 	try
 	{
-		result = calculated.pop();
+		result = calculated.top();
 	}
 	catch(TStack<double>::EmptyError&)
 	{
