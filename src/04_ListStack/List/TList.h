@@ -2,8 +2,10 @@
 #define _TLIST_H_
 #include <iostream>
 #include <iterator>
+#include <exception>
+#include <string>
 
-template <typename TNodeTypename>
+template <typename TNodeTypename, typename TPairTypename>
 class TListIterator : public std::iterator<std::input_iterator_tag, TNodeTypename>
 {
     template <typename, typename> friend class TList;
@@ -14,7 +16,7 @@ public:
     ~TListIterator() = default;
     bool operator!=(TListIterator const& other) const;
     bool operator==(TListIterator const& other) const;
-    typename TListIterator<TNodeTypename>::reference operator*() const;
+    typename TPairTypename operator*() const;
     TListIterator& operator++();
     TListIterator& operator++(int);
 };
@@ -34,18 +36,20 @@ public:
     {
     private:
         template<typename, typename> friend class TList;
+        static TKey mockKey;
         bool found = true;
         explicit TPair(bool found);
-        TPair(const TKey& key, const TData*& pData, bool found);
+        TPair(TKey& key, TData* pData, bool found);
     public:
         TKey& key;
-        TData*& pData;
+        TData* pData;
         TPair() = default;
         TPair(const TPair& other) = default;
-        TPair(const TNode* node);
-        TPair(const TKey& key, const TData*& pData);
+        TPair(TNode* node);
+        TPair(TKey& key, TData* pData);
         ~TPair() = default;
         operator bool() const;
+        typename TPair& operator=(const TPair& other);
     };
 private:
     TList::TNode* pFirst;
@@ -73,8 +77,8 @@ public:
     typename TPair current() const;
     void next();
 
-    typedef TListIterator<TList::TNode> iterator;
-    typedef TListIterator<TList::TNode> const_iterator;
+    typedef TListIterator<TList::TNode, TList::TPair> iterator;
+    typedef TListIterator<TList::TNode, TList::TPair> const_iterator;
     typename iterator begin();
     typename iterator end();
     typename const_iterator begin() const;
@@ -82,8 +86,19 @@ public:
 
     TList& operator+=(TKey key);
 
-    void output(std::ostream& stream) const;
+    void output(std::ostream& stream, const char* separator = " ", const char* ending = "\n") const;
+    void outputRaw(std::ostream& stream) const;
 };
+
+namespace TListException
+{
+    class NodeNotFound : ::std::exception
+    {
+        const ::std::string whatStr = "Node with given key not found.";
+    public:
+        virtual const char* what() { return whatStr.c_str(); }
+    };
+}
 
 // ------------------------------------------------------------------
 // ------------------------------ TNODE -----------------------------
@@ -100,28 +115,37 @@ TList<TKey, TData>::TNode::TNode(TKey key, TData* pData, TList<TKey, TData>::TNo
 // ------------------------------------------------------------------
 
 template<typename TKey, typename TData>
-TList<TKey, TData>::TPair::TPair(const TList<TKey, TData>::TNode* node)
-{
-    key = node->key;
-    pData = node->pData;
-}
+TKey TList<TKey, TData>::TPair::mockKey = 0;
 
 template<typename TKey, typename TData>
-TList<TKey, TData>::TPair::TPair(const TKey& key, const TData*& pData)
+TList<TKey, TData>::TPair::TPair(TList<TKey, TData>::TNode* node) 
+    : key(node->key), pData(node->pData) {}
+
+template<typename TKey, typename TData>
+TList<TKey, TData>::TPair::TPair(TKey& key, TData* pData)
     : key(key), pData(pData) {}
 
 template<typename TKey, typename TData>
-TList<TKey, TData>::TPair::TPair(const TKey& key, const TData*& pData, bool found)
+TList<TKey, TData>::TPair::TPair(TKey& key, TData* pData, bool found)
     : key(key), pData(pData), found(found) {}
 
 template<typename TKey, typename TData>
 TList<TKey, TData>::TPair::TPair(bool found)
-    : key(0), pData(nullptr), found(found) {}
+    : key(mockKey), pData(nullptr), found(found) {}
 
 template<typename TKey, typename TData>
 TList<TKey, TData>::TPair::operator bool() const
 {
     return found;
+}
+
+template<typename TKey, typename TData>
+typename TList<TKey, TData>::TPair& TList<TKey, TData>::TPair::operator=(const TPair& other)
+{
+    key = other.key;
+    pData = other.pData;
+    found = other.found;
+    return *this;
 }
 
 // ------------------------------------------------------------------
@@ -141,16 +165,17 @@ TList<TKey, TData>::TList()
 }
 
 template<typename TKey, typename TData>
-TList<TKey, TData>::TList(const TList& other)
+TList<TKey, TData>::TList(const TList& other) : TList()
 {
     if (!other.pFirst)
         return;
-    TNode* temp = other.pFirst, prev = nullptr;
+    pFirst = newNode(other.pFirst->key, other.pFirst->pData);
+    TNode* temp = other.pFirst->pNext;
+    TNode* prev = pFirst;
     while (temp)
     {
         TNode* node = newNode(temp.key, temp.pData);
-        if (prev)
-            prev->pNext = node;
+        prev->pNext = node;
         prev = node;
         temp = temp->pNext;
     }
@@ -158,17 +183,18 @@ TList<TKey, TData>::TList(const TList& other)
 }
 
 template<typename TKey, typename TData>
-TList<TKey, TData>::TList(const TList<TKey, TData>::TNode* firstNode)
+TList<TKey, TData>::TList(const TList<TKey, TData>::TNode* firstNode) : TList()
 {
     if (!firstNode)
         return;
-    TNode* temp = firstNode, prev = nullptr;
+    pFirst = newNode(firstNode->key, firstNode->pData);
+    TNode* temp = firstNode->pNext;
+    TNode* prev = pFirst;
     while (temp)
     {
-        TNode* pNode = newNode(temp.key, temp.pData);
-        if (prev)
-            prev->pNext = pNode;
-        prev = pNode;
+        TNode* node = newNode(temp.key, temp.pData);
+        prev->pNext = node;
+        prev = node;
         temp = temp->pNext;
     }
     reset();
@@ -203,7 +229,7 @@ typename TList<TKey, TData>::TPair TList<TKey, TData>::find(TKey needle)
     TNode* temp = pFirst;
     while (temp)
     {
-        if (pFirst->key == needle)
+        if (temp->key == needle)
             return TPair(temp->key, temp->pData);
         temp = temp->pNext;
     }
@@ -236,7 +262,7 @@ template<typename TKey, typename TData>
 void TList<TKey, TData>::insertBefore(TKey needle, TKey key, TData* pData)
 {
     if (!pFirst)
-        return;
+        throw TListException::NodeNotFound();
     if (pFirst->key == needle)
     {
         TNode* pNode = newNode(key, pData, pFirst);
@@ -246,9 +272,9 @@ void TList<TKey, TData>::insertBefore(TKey needle, TKey key, TData* pData)
     }
     TNode* temp = pFirst;
     while (temp->pNext && (temp->pNext->key != needle))
-        temp = temp->next;
+        temp = temp->pNext;
     if (!temp->pNext)
-        return;
+        throw TListException::NodeNotFound();
     TNode* pNode = newNode(key, pData, temp->pNext);
     temp->pNext = pNode;
 }
@@ -258,7 +284,7 @@ void TList<TKey, TData>::insertAfter(TKey needle, TKey key, TData* pData)
 {
     TNode* prev = findNode(needle);
     if (!prev)
-        return;
+        throw TListException::NodeNotFound();
     TNode* pNode = newNode(key, pData, prev->pNext);
     prev->pNext = pNode;
 }
@@ -345,14 +371,37 @@ TList<TKey, TData>& TList<TKey, TData>::operator+=(TKey key)
 }
 
 template<typename TKey, typename TData>
-void TList<TKey, TData>::output(std::ostream& stream) const
+void TList<TKey, TData>::output(std::ostream& stream, const char* separator, const char* ending) const
 {
     TNode* temp = pFirst;
     while (temp)
     {
-        stream << temp << ' ';
+        if (temp->pData)
+            stream << *(temp->pData);
+        else
+            stream << "nullptr";
+        stream << separator;
         temp = temp->pNext;
     }
+    stream << ending;
+}
+
+template<typename TKey, typename TData>
+void TList<TKey, TData>::outputRaw(std::ostream& stream) const
+{
+    TNode* temp = pFirst;
+    stream << "[\n";
+    while (temp)
+    {
+        stream << "    {\n        " << temp->key << "\n        ";
+        if (temp->pData)
+            stream << *(temp->pData);
+        else
+            stream << "nullptr";
+        stream << "\n    }\n";
+        temp = temp->pNext;
+    }
+    stream << "]\n";
 }
 
 // ------------------------------------------------------------------
@@ -387,37 +436,37 @@ typename TList<TKey, TData>::const_iterator TList<TKey, TData>::end() const
 // -------------------------- TLISTITERATOR -------------------------
 // ------------------------------------------------------------------
 
-template <typename TNodeTypename>
-TListIterator<TNodeTypename>::TListIterator(TNodeTypename* pNode) : pNode(pNode) {}
+template <typename TNodeTypename, typename TPairTypename>
+TListIterator<TNodeTypename, TPairTypename>::TListIterator(TNodeTypename* pNode) : pNode(pNode) {}
 
-template <typename TNodeTypename>
-bool TListIterator<TNodeTypename>::operator!=(TListIterator const& other) const
+template <typename TNodeTypename, typename TPairTypename>
+bool TListIterator<TNodeTypename, TPairTypename>::operator!=(TListIterator const& other) const
 {
     return pNode != other.pNode;
 }
 
-template <typename TNodeTypename>
-bool TListIterator<TNodeTypename>::operator==(TListIterator const& other) const
+template <typename TNodeTypename, typename TPairTypename>
+bool TListIterator<TNodeTypename, TPairTypename>::operator==(TListIterator const& other) const
 {
     return pNode == other.pNode;
 }
 
-template <typename TNodeTypename>
-typename TListIterator<TNodeTypename>::reference TListIterator<TNodeTypename>::operator*() const
+template <typename TNodeTypename, typename TPairTypename>
+typename TPairTypename TListIterator<TNodeTypename, TPairTypename>::operator*() const
 {
-    return *pNode;
+    return TPairTypename(pNode->key, pNode->pData);
 }
 
-template <typename TNodeTypename>
-TListIterator<TNodeTypename>& TListIterator<TNodeTypename>::operator++()
+template <typename TNodeTypename, typename TPairTypename>
+TListIterator<TNodeTypename, TPairTypename>& TListIterator<TNodeTypename, TPairTypename>::operator++()
 {
     if (pNode)
         pNode = pNode->pNext;
     return *this;
 }
 
-template <typename TNodeTypename>
-TListIterator<TNodeTypename>& TListIterator<TNodeTypename>::operator++(int)
+template <typename TNodeTypename, typename TPairTypename>
+TListIterator<TNodeTypename, TPairTypename>& TListIterator<TNodeTypename, TPairTypename>::operator++(int)
 {
     if (pNode)
         pNode = pNode->pNext;
