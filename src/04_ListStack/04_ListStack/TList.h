@@ -27,8 +27,8 @@ class TList
 public:
     struct TNode
     {
-        TKey key = 0;
-        TData* pData = nullptr;
+        TKey key;
+        TData* pData;
         TList<TKey, TData>::TNode* pNext = nullptr;
         explicit TNode(TKey key = 0, TData * pData = nullptr, TNode * pNext = nullptr);
     };
@@ -45,7 +45,7 @@ public:
         TData* pData;
         TPair() = default;
         TPair(const TPair& other) = default;
-        TPair(TNode* node);
+        TPair(TNode* pNode);
         TPair(TKey& key, TData* pData);
         ~TPair() = default;
         operator bool() const;
@@ -122,8 +122,8 @@ template<typename TKey, typename TData>
 TKey TList<TKey, TData>::TPair::mockKey = 0;
 
 template<typename TKey, typename TData>
-TList<TKey, TData>::TPair::TPair(TList<TKey, TData>::TNode* node)
-    : key(node->key), pData(node->pData) {}
+TList<TKey, TData>::TPair::TPair(TList<TKey, TData>::TNode* pNode)
+    : key(pNode->key), pData(pNode->pData) {}
 
 template<typename TKey, typename TData>
 TList<TKey, TData>::TPair::TPair(TKey& key, TData* pData)
@@ -178,9 +178,9 @@ TList<TKey, TData>::TList(const TList& other) : TList()
     TNode* prev = pFirst;
     while (temp)
     {
-        TNode* node = newNode(temp.key, temp.pData);
-        prev->pNext = node;
-        prev = node;
+        TNode* pNode = newNode(temp.key, temp.pData);
+        prev->pNext = pNode;
+        prev = pNode;
         temp = temp->pNext;
     }
     reset();
@@ -196,9 +196,9 @@ TList<TKey, TData>::TList(const TList<TKey, TData>::TNode* firstNode) : TList()
     TNode* prev = pFirst;
     while (temp)
     {
-        TNode* node = newNode(temp.key, temp.pData);
-        prev->pNext = node;
-        prev = node;
+        TNode* pNode = newNode(temp.key, temp.pData);
+        prev->pNext = pNode;
+        prev = pNode;
         temp = temp->pNext;
     }
     reset();
@@ -333,11 +333,11 @@ void TList<TKey, TData>::removeAll()
     TNode* temp = pFirst;
     while (temp)
     {
-        TNode* node = temp;
+        TNode* pNode = temp;
         temp = temp->pNext;
-        if (node->pData)
-            delete node->pData;
-        delete node;
+        if (pNode->pData)
+            delete pNode->pData;
+        delete pNode;
     }
     pFirst = nullptr;
     reset();
