@@ -303,7 +303,7 @@ template<typename TKey, typename TData>
 void TList<TKey, TData>::remove(TKey needle)
 {
     if (!pFirst)
-        return;
+        throw TListException::NodeNotFound();
     if (pFirst->key == needle)
     {
         TNode* pNode = pFirst;
@@ -317,7 +317,7 @@ void TList<TKey, TData>::remove(TKey needle)
     while (temp->pNext && (temp->pNext->key != needle))
         temp = temp->pNext;
     if (!temp->pNext)
-        return;
+        throw TListException::NodeNotFound();
     TNode* pNode = temp->pNext;
     temp->pNext = pNode->pNext;
     if (pNode->pData)
