@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="04_Polynomial.cpp" />
     <ClCompile Include="Monomial.cpp" />
+    <ClCompile Include="TPolynomial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TList.h" />

@@ -10,19 +10,12 @@ typedef TMonomialList::TPair TMonomialP;
 
 namespace Monomial
 {
-    struct TDegrees
-    {
-        unsigned x = 0U;
-        unsigned y = 0U;
-        unsigned z = 0U;
-        TDegrees(unsigned x, unsigned y, unsigned z);
-    };
 
-    bool checkDegrees(unsigned degrees);
-    bool checkDegrees(TDegrees degrees);
+    inline bool checkDegrees(unsigned degrees);
+    inline bool checkDegrees(unsigned x, unsigned y, unsigned z);
     bool checkDegreesSum(unsigned degrees1, unsigned degrees2 = 0U);
-    TDegrees rollDown(unsigned degrees);
-    unsigned rollUp(TDegrees degrees);
+    void rollDown(unsigned degrees, unsigned& x, unsigned& y, unsigned& z);
+    inline unsigned rollUp(unsigned x, unsigned y, unsigned z);
 
     class DegreeOverflow : std::exception
     {

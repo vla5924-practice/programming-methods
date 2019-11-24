@@ -1,45 +1,34 @@
 #include "Monomial.h"
+#define DEGX(A) ((A) / 100U)
+#define DEGY(A) ((A) / 10U % 10U)
+#define DEGZ(A) ((A) % 10U)
 
-Monomial::TDegrees::TDegrees(unsigned x, unsigned y, unsigned z) : x(x), y(y), z(z)
+namespace Monomial
 {
-}
+    bool checkDegrees(unsigned degrees)
+    {
+        return degrees <= 999U;
+    }
 
-bool Monomial::checkDegrees(unsigned degrees)
-{
-    return degrees <= 999U;
-}
+    bool checkDegrees(unsigned x, unsigned y, unsigned z)
+    {
+        return (x <= 9) && (y <= 9) && (z <= 9);
+    }
 
-bool Monomial::checkDegrees(TDegrees degrees)
-{
-    return (degrees.x <= 9U) && (degrees.y <= 9U) && (degrees.z <= 9U);
-}
+    void rollDown(unsigned degrees, unsigned& x, unsigned& y, unsigned& z)
+    {
+        if (!checkDegrees(degrees))
+            throw Monomial::DegreeOverflow();
+        x = degrees / 100U;
+        y = degrees / 10U % 10U;
+        z = degrees % 10U;
+    }
 
-bool Monomial::checkDegreesSum(unsigned degrees1, unsigned degrees2)
-{
-    TDegrees degreesR1 = rollDown(degrees1);
-    TDegrees degreesR2 = rollDown(degrees2);
-    TDegrees result(degreesR1.x + degreesR2.x, degreesR1.y + degreesR2.y, degreesR1.z + degreesR2.z);
-    if (!checkDegrees(result))
-        return false;
-    return true;
+    unsigned rollUp(unsigned x, unsigned y, unsigned z)
+    {
+        return x * 100 + y * 10 + z;
+    }
 }
-
-Monomial::TDegrees Monomial::rollDown(unsigned degrees)
-{
-    if (!checkDegrees(degrees))
-        throw DegreeOverflow();
-    unsigned x = degrees / 100U;
-    unsigned y = degrees / 10U % 10U;
-    unsigned z = degrees % 10U;
-    return TDegrees(x, y, z);
-}
-
-unsigned Monomial::rollUp(TDegrees degrees)
-{
-    if (!checkDegrees(degrees))
-        throw DegreeOverflow();
-}
-
 
 TMonomial operator+(TMonomial& lhs, const TMonomial& rhs)
 {
@@ -61,6 +50,12 @@ TMonomial operator*(TMonomial& lhs, const TMonomial& rhs)
 {
     if (!Monomial::checkDegrees(lhs.key + rhs.key))
         throw Monomial::DegreeOverflow();
-    double coefficient = *(lhs.pData) - *(rhs.pData);
-    return TMonomial(lhs.key, coefficient, lhs.pNext);
+    unsigned x = DEGX(lhs.key) + DEGX(rhs.key);
+    unsigned y = DEGY(lhs.key) + DEGY(rhs.key);
+    unsigned z = DEGZ(lhs.key) + DEGZ(rhs.key);
+    if (!Monomial::checkDegrees(x, y, z))
+        throw Monomial::DegreeOverflow();
+    unsigned degree = Monomial::rollUp(x, y, z);
+    double coefficient = (*(lhs.pData)) * (*(rhs.pData));
+    return TMonomial(degree, coefficient, lhs.pNext);
 }
