@@ -17,8 +17,8 @@ public:
     bool operator!=(TListIterator const& other) const;
     bool operator==(TListIterator const& other) const;
     typename TPairTypename operator*() const;
-    TListIterator& operator++();
-    TListIterator& operator++(int);
+    TListIterator operator++();
+    TListIterator operator++(int);
 };
 
 template <typename TKey, typename TData>
@@ -78,7 +78,7 @@ public:
     void insertAfter(TKey needle, TKey key, TData* pData = nullptr);
     void insertAfter(iterator i, TKey key, TData* pData);
     void remove(TKey needle);
-    void remove(iterator& i);
+    void remove(iterator i);
     void removeAll();
 
     size_t size() const;
@@ -139,7 +139,8 @@ TData* TList<TKey, TData>::TPair::mockData = nullptr;
 
 template<typename TKey, typename TData>
 TList<TKey, TData>::TPair::TPair(TList<TKey, TData>::TNode* pNode)
-    : key(pNode->key), pData(pNode->pData), baseNode(pNode) {}
+    : key(pNode ? pNode->key : mockKey), pData(pNode ? pNode->pData : mockData), 
+      baseNode(pNode), found(pNode) {}
 
 template<typename TKey, typename TData>
 TList<TKey, TData>::TPair::TPair(TKey& key, TData*& pData)
@@ -373,7 +374,7 @@ void TList<TKey, TData>::remove(TKey needle)
 }
 
 template<typename TKey, typename TData>
-void TList<TKey, TData>::remove(iterator& i)
+void TList<TKey, TData>::remove(iterator i)
 {
     if (!pFirst || !i.pNode)
         throw TListException::NodeNotFound();
@@ -528,11 +529,11 @@ bool TListIterator<TNodeTypename, TPairTypename>::operator==(TListIterator const
 template <typename TNodeTypename, typename TPairTypename>
 typename TPairTypename TListIterator<TNodeTypename, TPairTypename>::operator*() const
 {
-    return TPairTypename(pNode->key, pNode->pData, pNode);
+    return TPairTypename(pNode);
 }
 
 template <typename TNodeTypename, typename TPairTypename>
-TListIterator<TNodeTypename, TPairTypename>& TListIterator<TNodeTypename, TPairTypename>::operator++()
+TListIterator<TNodeTypename, TPairTypename> TListIterator<TNodeTypename, TPairTypename>::operator++()
 {
     if (pNode)
         pNode = pNode->pNext;
@@ -540,7 +541,7 @@ TListIterator<TNodeTypename, TPairTypename>& TListIterator<TNodeTypename, TPairT
 }
 
 template <typename TNodeTypename, typename TPairTypename>
-TListIterator<TNodeTypename, TPairTypename>& TListIterator<TNodeTypename, TPairTypename>::operator++(int)
+TListIterator<TNodeTypename, TPairTypename> TListIterator<TNodeTypename, TPairTypename>::operator++(int)
 {
     TNodeTypename* temp = pNode;
     if (pNode)

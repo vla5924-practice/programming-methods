@@ -13,9 +13,10 @@ namespace Monomial
 
     inline bool checkDegrees(unsigned degrees);
     inline bool checkDegrees(unsigned x, unsigned y, unsigned z);
-    bool checkDegreesSum(unsigned degrees1, unsigned degrees2 = 0U);
     void rollDown(unsigned degrees, unsigned& x, unsigned& y, unsigned& z);
     inline unsigned rollUp(unsigned x, unsigned y, unsigned z);
+    inline TMonomial make(double coefficient, unsigned x, unsigned y, unsigned z);
+    inline TMonomial make(double coefficient, unsigned degrees);
 
     class DegreeOverflow : std::exception
     {

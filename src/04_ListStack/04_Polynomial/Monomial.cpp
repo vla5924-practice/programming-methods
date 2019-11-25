@@ -28,6 +28,28 @@ namespace Monomial
     {
         return x * 100 + y * 10 + z;
     }
+    TMonomial make(double coefficient, unsigned x, unsigned y, unsigned z)
+    {
+        if (!checkDegrees(x, y, z))
+            throw DegreeOverflow();
+        return TMonomial(rollUp(x, y, z), coefficient, nullptr);
+    }
+    TMonomial make(double coefficient, unsigned degrees)
+    {
+        if (!checkDegrees(degrees))
+            throw DegreeOverflow();
+        return TMonomial(degrees, coefficient, nullptr);
+    }
+}
+
+TMonomial operator+(const TMonomial& monomial)
+{
+    return monomial;
+}
+
+TMonomial operator-(const TMonomial& monomial)
+{
+    return TMonomial(monomial.key, -1 * (*monomial.pData), monomial.pNext);
 }
 
 TMonomial operator+(TMonomial& lhs, const TMonomial& rhs)

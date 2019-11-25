@@ -1,5 +1,6 @@
-#ifndef _TPOLYNOMIAL_H_
+﻿#ifndef _TPOLYNOMIAL_H_
 #define _TPOLYNOMIAL_H_
+#define POLYNOM_ZERO_SYMBOL '⁰'
 
 #include <iostream>
 #include <string>
@@ -9,7 +10,13 @@ class TPolynomial
 {
     TList<unsigned, double>* monomials;
     TMonomialList::iterator findPrevOrderedDegree(unsigned degree) const;
+    TMonomialList::iterator getNextIterator(TMonomialList::iterator iterator) const;
+    void add(double coefficient, unsigned degree);
+    void add(double* pCoef, unsigned degree);
+    void reduce();
+    void nullify();
 public:
+
     TPolynomial();
     TPolynomial(const std::string& str);
     TPolynomial(const TPolynomial& other);
