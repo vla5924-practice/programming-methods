@@ -21,13 +21,21 @@ TMonomialList::iterator TPolynomial::getNextIterator(TMonomialList::iterator ite
 void TPolynomial::add(double coefficient, unsigned degree)
 {
     double* pCoef = new double(coefficient);
-    monomials->insertAfter(findPrevOrderedDegree(degree), degree, pCoef);
+    TMonomialList::iterator prevOrdered = findPrevOrderedDegree(degree);
+    if (prevOrdered != monomials->end())
+        monomials->insertAfter(prevOrdered, degree, pCoef);
+    else
+        monomials->insertToStart(degree, pCoef);
     delete pCoef;
 }
 
 void TPolynomial::add(double* pCoef, unsigned degree)
 {
-    monomials->insertAfter(findPrevOrderedDegree(degree), degree, pCoef);
+    TMonomialList::iterator prevOrdered = findPrevOrderedDegree(degree);
+    if (prevOrdered != monomials->end())
+        monomials->insertAfter(prevOrdered, degree, pCoef);
+    else
+        monomials->insertToStart(degree, pCoef);
 }
 
 void TPolynomial::reduce()
@@ -60,6 +68,13 @@ TPolynomial::TPolynomial()
 TPolynomial::TPolynomial(const std::string& str) : TPolynomial()
 {
     parse(str);
+}
+
+TPolynomial::TPolynomial(const TMonomial& monomial) : TPolynomial()
+{
+    if (!Monomial::checkDegrees(monomial.key))
+        throw Monomial::DegreeOverflow();
+    monomials->insertToStart(monomial.key, monomial.pData);
 }
 
 TPolynomial::TPolynomial(const TPolynomial& other)
@@ -115,14 +130,12 @@ TPolynomial TPolynomial::operator+(const TMonomial& monomial)
 
 TPolynomial TPolynomial::operator+(const TMonomialP& monomial)
 {
-    return *this;
-    //return *this + Monomial::make(*monomial.pData, monomial.key);
+    return *this + Monomial::make(*monomial.pData, monomial.key);
 }
 
 TPolynomial TPolynomial::operator+(double number)
 {
-    return *this;
-    //return *this + Monomial::make(number, 0U);
+    return *this + Monomial::make(number, 0U);
 }
 
 TPolynomial TPolynomial::operator-(const TPolynomial& other)
@@ -153,14 +166,12 @@ TPolynomial TPolynomial::operator-(const TMonomial& monomial)
 
 TPolynomial TPolynomial::operator-(const TMonomialP& monomial)
 {
-    return *this;
-    //return *this - Monomial::make(*monomial.pData, monomial.key);
+    return *this - Monomial::make(*monomial.pData, monomial.key);
 }
 
 TPolynomial TPolynomial::operator-(double number)
 {
-    return *this;
-    //return *this - Monomial::make(number, 0U);
+    return *this - Monomial::make(number, 0U);
 }
 
 TPolynomial TPolynomial::operator*(double number)
@@ -177,4 +188,12 @@ TPolynomial TPolynomial::operator*(double number)
 void TPolynomial::parse(const std::string str)
 {
 
+}
+
+void TPolynomial::testcout() const
+{
+    std::cout << "[ ";
+    for (auto i : *monomials)
+        std::cout << *i.pData << ' ' << i.key << ", ";
+    std::cout << "]\n";
 }

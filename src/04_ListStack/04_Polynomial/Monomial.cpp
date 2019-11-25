@@ -28,12 +28,14 @@ namespace Monomial
     {
         return x * 100 + y * 10 + z;
     }
+
     TMonomial make(double coefficient, unsigned x, unsigned y, unsigned z)
     {
         if (!checkDegrees(x, y, z))
             throw DegreeOverflow();
         return TMonomial(rollUp(x, y, z), coefficient, nullptr);
     }
+
     TMonomial make(double coefficient, unsigned degrees)
     {
         if (!checkDegrees(degrees))
@@ -80,4 +82,25 @@ TMonomial operator*(TMonomial& lhs, const TMonomial& rhs)
     unsigned degree = Monomial::rollUp(x, y, z);
     double coefficient = (*(lhs.pData)) * (*(rhs.pData));
     return TMonomial(degree, coefficient, lhs.pNext);
+}
+
+TMonomial operator "" _monom(const char* literal, size_t)
+{
+    std::string l = literal;
+    size_t index = l.find_first_of("+-1234567890");
+    std::string strCoef, strDegs;
+    l = l.substr(index);
+    size_t index2 = l.find_first_not_of("+-0123456789.");
+    if (index2 < l.size())
+    {
+        strCoef = l.substr(index, index2);
+        strDegs = l.substr(index2);
+        // ...
+    }
+    else
+    {
+        strCoef = l.substr(index);
+        // ...
+    }
+    return Monomial::make(std::stod(strCoef), 0U);
 }

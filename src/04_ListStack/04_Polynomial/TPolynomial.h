@@ -19,6 +19,7 @@ public:
 
     TPolynomial();
     TPolynomial(const std::string& str);
+    TPolynomial(const TMonomial& monomial);
     TPolynomial(const TPolynomial& other);
     TPolynomial(const TMonomialList& list);
     ~TPolynomial();
@@ -41,6 +42,7 @@ public:
     friend std::istream& operator>>(std::istream& stream, TPolynomial& polynomial);
 
     void parse(const std::string str);
+    void testcout() const;
 };
 
 //TPolynomial operator""_poly(const char* str);

@@ -2,6 +2,7 @@
 #define _MONOMIAL_H_
 
 #include <exception>
+#include <string>
 #include "TList.h"
 
 typedef TList<unsigned, double> TMonomialList;
@@ -15,8 +16,8 @@ namespace Monomial
     inline bool checkDegrees(unsigned x, unsigned y, unsigned z);
     void rollDown(unsigned degrees, unsigned& x, unsigned& y, unsigned& z);
     inline unsigned rollUp(unsigned x, unsigned y, unsigned z);
-    inline TMonomial make(double coefficient, unsigned x, unsigned y, unsigned z);
-    inline TMonomial make(double coefficient, unsigned degrees);
+    TMonomial make(double coefficient, unsigned x, unsigned y, unsigned z);
+    TMonomial make(double coefficient, unsigned degrees);
 
     class DegreeOverflow : std::exception
     {
@@ -39,5 +40,6 @@ TMonomial operator-(TMonomial& lhs, const TMonomial& rhs);
 TMonomial operator*(TMonomial& lhs, const TMonomial& rhs);
 TMonomial operator*(TMonomial& lhs, const double rhs);
 TMonomial operator*(double lhs, const TMonomial& rhs);
+TMonomial operator "" _monom(const char* literal, size_t);
 
 #endif //!_MONOMIAL_H_
