@@ -79,23 +79,31 @@ void TPolynomial::parse(const char* const expression)
         size_t delta = 0U;
         size_t offset = str.find_first_of(FLOAT_NUM_SYMBOLS);
         size_t offset2 = str.find_first_of("+-", offset + 1);
+        size_t offset3 = str.find_first_of("xyz");
+        bool hasCoef = true;
+        if (offset3 < offset)
+        {
+            offset = offset3;
+            offset2 = str.find_first_of("+-", offset);
+            hasCoef = false;
+        }
         std::string strMonom;
         if (offset2 >= str.size())
             strMonom = str;
         else
             strMonom = str.substr(0, offset2);
-        if (strMonom[offset + 1] == ' ')
+        if (hasCoef && (strMonom[offset + 1] == ' '))
         {
             char symbol = strMonom[offset];
             delta = strMonom.find_first_not_of(' ', offset + 1) - 1;
             strMonom = strMonom.substr(delta + 1);
             strMonom = symbol + strMonom;
         }
-        std::string strCoef = getFirstFloatNumber(strMonom.c_str(), offset);
-        offset2 = strMonom.find_first_of("xyz");
-        if (offset >= offset2)
-            strCoef = "1";
-        std::string remain = strMonom.substr(strCoef.size() + offset);
+        std::string strCoef = hasCoef ? getFirstFloatNumber(strMonom.c_str(), offset) : "1";
+        //offset2 = strMonom.find_first_of("xyz");
+        //if (offset >= offset2)
+        //    strCoef = "1";
+        std::string remain = hasCoef ? strMonom.substr(strCoef.size() + offset) : strMonom;
         size_t remainFirstNums = remain.find_first_of("0123456789");
         if (remainFirstNums < remain.find_first_of("xyz"))
             throw SyntaxError(); // like -123 45*x^2*...
@@ -103,7 +111,7 @@ void TPolynomial::parse(const char* const expression)
         unsigned degree = 0U;
         while ((remainVars = remain.find_first_of("xyz")) < remain.size())
         {
-            std::string strVarArea = remain.substr(remainVars, remain.find_first_of("xyz", remainVars + 1U) - 1U);
+            std::string strVarArea = remain.substr(remainVars, remain.find_first_of("xyz", remainVars + 1U));
             unsigned factor;
             unsigned addingDegree = getDegreeMask(strVarArea.c_str(), factor);
             unsigned currentDegree = factor == 1U ? DEGZ(degree) : factor == 10U ? DEGY(degree) : DEGX(degree);
