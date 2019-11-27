@@ -22,6 +22,7 @@ class TPolynomial
     const std::string getFirstFloatNumber(const char* const expression, size_t& offset) const;
     const std::string getFirstUIntNumber(const char* const expression, size_t& offset) const;
     unsigned getDegreeMask(const char* const expression, unsigned& factor) const;
+
 public:
 
     TPolynomial();
