@@ -1,7 +1,4 @@
 #include "Monomial.h"
-#define DEGX(A) ((A) / 100U)
-#define DEGY(A) ((A) / 10U % 10U)
-#define DEGZ(A) ((A) % 10U)
 
 namespace Monomial
 {
@@ -58,7 +55,7 @@ TMonomial operator+(TMonomial& lhs, const TMonomial& rhs)
 {
     if (lhs.key != rhs.key)
         throw Monomial::DegreeUnequality();
-    double coefficient = *(lhs.pData) + *(rhs.pData);
+    double coefficient = *lhs.pData + *rhs.pData;
     return TMonomial(lhs.key, coefficient, lhs.pNext);
 }
 
@@ -80,27 +77,16 @@ TMonomial operator*(TMonomial& lhs, const TMonomial& rhs)
     if (!Monomial::checkDegrees(x, y, z))
         throw Monomial::DegreeOverflow();
     unsigned degree = Monomial::rollUp(x, y, z);
-    double coefficient = (*(lhs.pData)) * (*(rhs.pData));
+    double coefficient = (*lhs.pData) * (*rhs.pData);
     return TMonomial(degree, coefficient, lhs.pNext);
 }
 
-TMonomial operator "" _monom(const char* literal, size_t)
+TMonomial operator*(TMonomial& lhs, const double rhs)
 {
-    std::string l = literal;
-    size_t index = l.find_first_of("+-1234567890");
-    std::string strCoef, strDegs;
-    l = l.substr(index);
-    size_t index2 = l.find_first_not_of("+-0123456789.");
-    if (index2 < l.size())
-    {
-        strCoef = l.substr(index, index2);
-        strDegs = l.substr(index2);
-        // ...
-    }
-    else
-    {
-        strCoef = l.substr(index);
-        // ...
-    }
-    return Monomial::make(std::stod(strCoef), 0U);
+    return TMonomial(lhs.key, *lhs.pData * rhs, lhs.pNext);
+}
+
+TMonomial operator*(double lhs, const TMonomial& rhs)
+{
+    return TMonomial(rhs.key, *rhs.pData * lhs, rhs.pNext);
 }

@@ -89,8 +89,6 @@ public:
     typename const_iterator begin() const;
     typename const_iterator end() const;
 
-    TList& operator+=(TKey key);
-
     void output(std::ostream& stream, const char* separator = " ", const char* ending = "\n") const;
     void outputRaw(std::ostream& stream) const;
 };
@@ -436,13 +434,6 @@ template<typename TKey, typename TData>
 bool TList<TKey, TData>::empty() const
 {
     return pFirst == nullptr;
-}
-
-template<typename TKey, typename TData>
-TList<TKey, TData>& TList<TKey, TData>::operator+=(TKey key)
-{
-    insertToEnd(key, nullptr);
-    return *this;
 }
 
 template<typename TKey, typename TData>

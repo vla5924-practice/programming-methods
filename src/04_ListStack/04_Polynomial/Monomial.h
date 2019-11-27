@@ -1,6 +1,10 @@
 #ifndef _MONOMIAL_H_
 #define _MONOMIAL_H_
 
+#define DEGX(A) ((A) / 100U)
+#define DEGY(A) ((A) / 10U % 10U)
+#define DEGZ(A) ((A) % 10U)
+
 #include <exception>
 #include <string>
 #include "TList.h"
@@ -40,6 +44,5 @@ TMonomial operator-(TMonomial& lhs, const TMonomial& rhs);
 TMonomial operator*(TMonomial& lhs, const TMonomial& rhs);
 TMonomial operator*(TMonomial& lhs, const double rhs);
 TMonomial operator*(double lhs, const TMonomial& rhs);
-TMonomial operator "" _monom(const char* literal, size_t);
 
 #endif //!_MONOMIAL_H_

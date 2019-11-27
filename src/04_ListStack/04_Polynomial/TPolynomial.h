@@ -1,10 +1,11 @@
 ﻿#ifndef _TPOLYNOMIAL_H_
 #define _TPOLYNOMIAL_H_
-#define POLYNOM_ZERO_SYMBOL '⁰'
 
 #include <iostream>
-#include <string>
 #include "Monomial.h"
+
+constexpr const char* FLOAT_NUM_SYMBOLS = "0123456789.+-";
+constexpr const char* UINT_NUM_SYMBOLS = "0123456789+";
 
 class TPolynomial
 {
@@ -13,12 +14,18 @@ class TPolynomial
     TMonomialList::iterator getNextIterator(TMonomialList::iterator iterator) const;
     void add(double coefficient, unsigned degree);
     void add(double* pCoef, unsigned degree);
+    void removeNulls();
     void reduce();
     void nullify();
+    void parse(const char* const expression);
+    const std::string monomToStr(const TMonomial& monomial) const;
+    const std::string getFirstFloatNumber(const char* const expression, size_t& offset) const;
+    const std::string getFirstUIntNumber(const char* const expression, size_t& offset) const;
+    unsigned getDegreeMask(const char* const expression, unsigned& factor) const;
 public:
 
     TPolynomial();
-    TPolynomial(const std::string& str);
+    TPolynomial(const char* const expression);
     TPolynomial(const TMonomial& monomial);
     TPolynomial(const TPolynomial& other);
     TPolynomial(const TMonomialList& list);
@@ -41,10 +48,15 @@ public:
     friend std::ostream& operator<<(std::ostream& stream, const TPolynomial& polynomial);
     friend std::istream& operator>>(std::istream& stream, TPolynomial& polynomial);
 
-    void parse(const std::string str);
-    void testcout() const;
+
+    class SyntaxError : std::exception
+    {
+        const std::string whatStr = "Serialization cannot be parsed.";
+    public:
+        virtual const char* what() { return whatStr.c_str(); }
+    };
 };
 
-//TPolynomial operator""_poly(const char* str);
+TPolynomial operator ""_poly(const char* literal, size_t);
 
 #endif //!_TPOLYNOMIAL_H_
