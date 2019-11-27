@@ -92,8 +92,11 @@ void TPolynomial::parse(const char* const expression)
             strMonom = symbol + strMonom;
         }
         std::string strCoef = getFirstFloatNumber(strMonom.c_str(), offset);
+        offset2 = strMonom.find_first_of("xyz");
+        if (offset >= offset2)
+            strCoef = "1";
         std::string remain = strMonom.substr(strCoef.size() + offset);
-            size_t remainFirstNums = remain.find_first_of("0123456789");
+        size_t remainFirstNums = remain.find_first_of("0123456789");
         if (remainFirstNums < remain.find_first_of("xyz"))
             throw SyntaxError(); // like -123 45*x^2*...
         size_t remainVars;
@@ -124,8 +127,6 @@ const std::string TPolynomial::monomToStr(const TMonomial& monomial) const
         return std::string("0");
     if (*monomial.pData != 1)
         str += std::to_string(*monomial.pData);
-//    if ((*monomial.pData != 1) && (monomial.key > 0U))
-//        str += '*';
     if (monomial.key > 0U)
     {
         if (DEGX(monomial.key) > 0)
@@ -178,13 +179,15 @@ unsigned TPolynomial::getDegreeMask(const char* const expression, unsigned& fact
         return 1000U;
     size_t varsFound = str.find_first_of("xyz");
     size_t numsFound = str.find_first_of("0123456789");
-    if ((numsFound < varsFound) || (varsFound >= str.size()) || (numsFound >= str.size()))
+    if ((numsFound < varsFound) || (varsFound >= str.size()))
         return 1000U;
     factor = 1U;
     if (str[varsFound] == 'x')
         factor = 100U;
     else if (str[varsFound] == 'y')
         factor = 10U;
+    if (numsFound >= str.size())
+        return 1U;
     size_t offset;
     unsigned degree = static_cast<unsigned>(std::stoul(getFirstUIntNumber(expression, offset)));
     return degree;
