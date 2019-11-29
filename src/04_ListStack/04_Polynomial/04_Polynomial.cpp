@@ -12,6 +12,9 @@ int main()
         p = p + p;
         std::cout << p << '\n';*/
         std::cout << "xz + y"_poly << '\n';
+        TPolynomial ip;
+        std::cin >> ip;
+        std::cout << ip;
     }
     catch (TPolynomial::SyntaxError & e)
     {
