@@ -6,6 +6,7 @@
 
 constexpr const char* FLOAT_NUM_SYMBOLS = "0123456789.+-";
 constexpr const char* UINT_NUM_SYMBOLS = "0123456789+";
+constexpr double EPSILON = 1e-4;
 
 class TPolynomial
 {

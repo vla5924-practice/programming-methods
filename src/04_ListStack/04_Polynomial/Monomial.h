@@ -18,7 +18,7 @@ namespace Monomial
 
     inline bool checkDegrees(unsigned degrees);
     inline bool checkDegrees(unsigned x, unsigned y, unsigned z);
-    void rollDown(unsigned degrees, unsigned& x, unsigned& y, unsigned& z);
+    inline void rollDown(unsigned degrees, unsigned& x, unsigned& y, unsigned& z);
     inline unsigned rollUp(unsigned x, unsigned y, unsigned z);
     TMonomial make(double coefficient, unsigned x, unsigned y, unsigned z);
     TMonomial make(double coefficient, unsigned degrees);

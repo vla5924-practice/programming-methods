@@ -69,17 +69,23 @@ void TPolynomial::nullify()
 
 void TPolynomial::parse(const char* const expression)
 {
-    std::string str = expression;
-    str = str.substr(str.find_first_not_of(' '));
-    if (str.find_first_not_of("0123456789+-*xyz^. \t\n") < str.size())
+    std::string rawStr = expression;
+    rawStr = rawStr.substr(rawStr.find_first_not_of(' '));
+    if (rawStr.find_first_not_of("0123456789+-*xyz^. \t\n") < rawStr.size())
         throw SyntaxError();
-    bool isEnded = false;
+    std::string str;
+    for (char symbol : rawStr)
+        if (symbol != ' ')
+            str += symbol;
+    rawStr.clear();
     do
     {
         size_t delta = 0U;
         size_t offset = str.find_first_of(FLOAT_NUM_SYMBOLS);
         size_t offset2 = str.find_first_of("+-", offset + 1);
         size_t offset3 = str.find_first_of("xyz");
+        if ((offset >= str.size()) && (offset3 >= str.size()))
+            throw SyntaxError();
         bool hasCoef = true;
         if (offset3 < offset)
         {
@@ -92,18 +98,35 @@ void TPolynomial::parse(const char* const expression)
             strMonom = str;
         else
             strMonom = str.substr(0, offset2);
-        if (hasCoef && (strMonom[offset + 1] == ' '))
+        /*if (hasCoef && (strMonom[offset + 1] == ' '))
         {
             char symbol = strMonom[offset];
             delta = strMonom.find_first_not_of(' ', offset + 1) - 1;
             strMonom = strMonom.substr(delta + 1);
             strMonom = symbol + strMonom;
+        }*/
+        std::string strCoef;
+        size_t strCoefSize = 0ULL;
+        if (hasCoef)
+        {
+            strCoef = getFirstFloatNumber(strMonom.c_str(), offset);
+            strCoefSize = strCoef.size();
+            if (strCoef == "-")
+            {
+                strCoefSize = 1ULL;
+                strCoef = "-1";
+            }
+            else if (strCoef == "+")
+            {
+                strCoefSize = 1ULL;
+                strCoef = "1";
+            }
         }
-        std::string strCoef = hasCoef ? getFirstFloatNumber(strMonom.c_str(), offset) : "1";
-        //offset2 = strMonom.find_first_of("xyz");
-        //if (offset >= offset2)
-        //    strCoef = "1";
-        std::string remain = hasCoef ? strMonom.substr(strCoef.size() + offset) : strMonom;
+        else
+        {
+            strCoef = "1";
+        }
+        std::string remain = hasCoef ? strMonom.substr(strCoefSize + offset) : strMonom;
         size_t remainFirstNums = remain.find_first_of("0123456789");
         if (remainFirstNums < remain.find_first_of("xyz"))
             throw SyntaxError(); // like -123 45*x^2*...
@@ -111,7 +134,8 @@ void TPolynomial::parse(const char* const expression)
         unsigned degree = 0U;
         while ((remainVars = remain.find_first_of("xyz")) < remain.size())
         {
-            std::string strVarArea = remain.substr(remainVars, remain.find_first_of("xyz", remainVars + 1U));
+            size_t remainVarsNext = remain.find_first_of("xyz", remainVars + 1U) - 1U;
+            std::string strVarArea = remain.substr(remainVars, remainVarsNext > 0ULL ? remainVarsNext : 1ULL);
             unsigned factor;
             unsigned addingDegree = getDegreeMask(strVarArea.c_str(), factor);
             unsigned currentDegree = factor == 1U ? DEGZ(degree) : factor == 10U ? DEGY(degree) : DEGX(degree);
@@ -120,7 +144,15 @@ void TPolynomial::parse(const char* const expression)
             degree += addingDegree * factor;
             remain = remain.substr(remainVars + strVarArea.size());
         }
-        double coefficient = std::stod(strCoef);
+        double coefficient = 0.;
+        try
+        {
+            coefficient = std::stod(strCoef);
+        }
+        catch (...)
+        {
+            throw SyntaxError();
+        }
         add(coefficient, degree);
         str = str.substr(strMonom.size() + delta);
         if(str.size() > 0)
@@ -133,7 +165,9 @@ const std::string TPolynomial::monomToStr(const TMonomial& monomial) const
     std::string str;
     if (*monomial.pData == 0)
         return std::string("0");
-    if (*monomial.pData != 1)
+    if (fabs(*monomial.pData - (int)*monomial.pData) < EPSILON)
+        str += std::to_string((int)*monomial.pData);
+    else
         str += std::to_string(*monomial.pData);
     if (monomial.key > 0U)
     {
