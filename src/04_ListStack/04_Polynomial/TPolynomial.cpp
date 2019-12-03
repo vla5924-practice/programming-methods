@@ -2,12 +2,18 @@
 
 TMonomialList::iterator TPolynomial::findPrevOrderedDegree(unsigned degree) const
 {
+    if (!monomials->empty())
+    {
+        TMonomialP first = *(monomials->begin());
+        if (degree >= first.key)
+            return monomials->end();
+    }
     TMonomialList::iterator temp = monomials->begin();
     for (TMonomialList::iterator i = monomials->begin(); i != monomials->end(); i++)
     {
         temp = i;
         TMonomialList::iterator next = getNextIterator(temp);
-        if ((*next).key < degree)
+        if ((*next).key <= degree)
             return temp;
     }
     return temp;
@@ -21,11 +27,7 @@ TMonomialList::iterator TPolynomial::getNextIterator(TMonomialList::iterator ite
 void TPolynomial::add(double coefficient, unsigned degree)
 {
     double* pCoef = new double(coefficient);
-    TMonomialList::iterator prevOrdered = findPrevOrderedDegree(degree);
-    if (prevOrdered != monomials->end())
-        monomials->insertAfter(prevOrdered, degree, pCoef);
-    else
-        monomials->insertToStart(degree, pCoef);
+    add(pCoef, degree);
     delete pCoef;
 }
 
@@ -40,6 +42,15 @@ void TPolynomial::add(double* pCoef, unsigned degree)
 
 void TPolynomial::removeNulls()
 {
+    if (!monomials->empty())
+    {
+        TMonomialP first = *(monomials->begin());
+        if ((getNextIterator(monomials->begin()) == monomials->end()) && (*first.pData == 0.))
+        {
+            monomials->removeAll();
+            return;
+        }
+    }
     for (TMonomialList::iterator i = monomials->begin(); i != monomials->end(); i++)
         if (*(*i).pData == 0.)
             monomials->remove(i);
@@ -81,7 +92,7 @@ void TPolynomial::parse(const char* const expression)
     do
     {
         size_t delta = 0U;
-        size_t offset = str.find_first_of(FLOAT_NUM_SYMBOLS);
+        size_t offset = str.find_first_of("0123456789.+-");
         size_t offset2 = str.find_first_of("+-", offset + 1);
         size_t offset3 = str.find_first_of("xyz");
         if ((offset >= str.size()) && (offset3 >= str.size()))
@@ -163,6 +174,7 @@ void TPolynomial::parse(const char* const expression)
 
 const std::string TPolynomial::monomToStr(const TMonomial& monomial) const
 {
+    constexpr double EPSILON = 1e-4;
     std::string str;
     if (*monomial.pData == 0)
         return std::string("0");
@@ -200,15 +212,15 @@ const std::string TPolynomial::monomToStr(const TMonomial& monomial) const
 const std::string TPolynomial::getFirstFloatNumber(const char* const expression, size_t& offset) const
 {
     std::string str = expression;
-    offset = str.find_first_of(FLOAT_NUM_SYMBOLS);
-    return str.substr(offset, str.find_first_not_of(FLOAT_NUM_SYMBOLS, offset));
+    offset = str.find_first_of("0123456789.+-");
+    return str.substr(offset, str.find_first_not_of("0123456789.+-", offset));
 }
 
 const std::string TPolynomial::getFirstUIntNumber(const char* const expression, size_t& offset) const
 {
     std::string str = expression;
-    offset = str.find_first_of(UINT_NUM_SYMBOLS);
-    size_t count = str.find_first_not_of(UINT_NUM_SYMBOLS, offset);
+    offset = str.find_first_of("0123456789+");
+    size_t count = str.find_first_not_of("0123456789+", offset);
     if(count < str.size())
         return str.substr(offset, count);
     else
@@ -253,6 +265,16 @@ TPolynomial::TPolynomial(const TMonomial& monomial) : TPolynomial()
     monomials->insertToStart(monomial.key, monomial.pData);
 }
 
+TPolynomial::TPolynomial(const TMonomialP& monomial) 
+    : TPolynomial(Monomial::make(*monomial.pData, monomial.key))
+{
+}
+
+TPolynomial::TPolynomial(double number)
+    : TPolynomial(Monomial::make(number, 0U))
+{
+}
+
 TPolynomial::TPolynomial(const TPolynomial& other)
 {
     monomials = new TMonomialList(*other.monomials);
@@ -283,10 +305,10 @@ TPolynomial& TPolynomial::operator=(const TPolynomial& other)
 TPolynomial TPolynomial::operator+(const TPolynomial& other)
 {
     TPolynomial result(*this);
-    for (TMonomialList::iterator i = result.monomials->begin(); i != result.monomials->end(); i++)
+    for (TMonomialList::iterator i = other.monomials->begin(); i != other.monomials->end(); i++)
     {
         TMonomialP current = *i;
-        TMonomialP monomial = other.monomials->find(current.key);
+        TMonomialP monomial = result.monomials->find(current.key);
         if (monomial)
             *current.pData += *monomial.pData;
         else
@@ -321,14 +343,14 @@ TPolynomial TPolynomial::operator+(double number)
 TPolynomial TPolynomial::operator-(const TPolynomial& other)
 {
     TPolynomial result(*this);
-    for (TMonomialList::iterator i = result.monomials->begin(); i != result.monomials->end(); i++)
+    for (TMonomialList::iterator i = other.monomials->begin(); i != other.monomials->end(); i++)
     {
         TMonomialP current = *i;
-        TMonomialP monomial = other.monomials->find(current.key);
+        TMonomialP monomial = result.monomials->find(current.key);
         if (monomial)
             *current.pData -= *monomial.pData;
         else
-            result.add(*current.pData, current.key);
+            result.add(-*current.pData, current.key);
     }
     result.removeNulls();
     return result;
@@ -341,7 +363,7 @@ TPolynomial TPolynomial::operator-(const TMonomial& monomial)
     if (needle)
         *needle.pData -= *monomial.pData;
     else
-        result.add(monomial.pData, monomial.key);
+        result.add(-*monomial.pData, monomial.key);
     result.removeNulls();
     return result;
 }

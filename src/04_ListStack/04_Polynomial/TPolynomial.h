@@ -4,10 +4,6 @@
 #include <iostream>
 #include "Monomial.h"
 
-constexpr const char* FLOAT_NUM_SYMBOLS = "0123456789.+-";
-constexpr const char* UINT_NUM_SYMBOLS = "0123456789+";
-constexpr double EPSILON = 1e-4;
-
 class TPolynomial
 {
     TList<unsigned, double>* monomials;
@@ -29,6 +25,8 @@ public:
     TPolynomial();
     TPolynomial(const char* const expression);
     TPolynomial(const TMonomial& monomial);
+    TPolynomial(const TMonomialP& monomial);
+    TPolynomial(double number);
     TPolynomial(const TPolynomial& other);
     TPolynomial(const TMonomialList& list);
     ~TPolynomial();
