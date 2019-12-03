@@ -47,6 +47,19 @@ public:
     TPolynomial operator*(const TMonomialP& monomial);
     TPolynomial operator*(double number);
 
+    TPolynomial& operator+=(const TPolynomial& other);
+    TPolynomial& operator+=(const TMonomial& monomial);
+    TPolynomial& operator+=(const TMonomialP& monomial);
+    TPolynomial& operator+=(double number);
+    TPolynomial& operator-=(const TPolynomial& other);
+    TPolynomial& operator-=(const TMonomial& monomial);
+    TPolynomial& operator-=(const TMonomialP& monomial);
+    TPolynomial& operator-=(double number);
+    TPolynomial& operator*=(const TPolynomial& other);
+    TPolynomial& operator*=(const TMonomial& monomial);
+    TPolynomial& operator*=(const TMonomialP& monomial);
+    TPolynomial& operator*=(double number);
+
     friend std::ostream& operator<<(std::ostream& stream, const TPolynomial& polynomial);
     friend std::istream& operator>>(std::istream& stream, TPolynomial& polynomial);
 

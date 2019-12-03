@@ -6,8 +6,8 @@ TMonomialList::iterator TPolynomial::findPrevOrderedDegree(unsigned degree) cons
     for (TMonomialList::iterator i = monomials->begin(); i != monomials->end(); i++)
     {
         temp = i;
-        TMonomialList::iterator j = getNextIterator(temp);
-        if ((*j).key < degree)
+        TMonomialList::iterator next = getNextIterator(temp);
+        if ((*next).key < degree)
             return temp;
     }
     return temp;
@@ -273,6 +273,8 @@ TPolynomial::~TPolynomial()
 
 TPolynomial& TPolynomial::operator=(const TPolynomial& other)
 {
+    if (this == &other)
+        return *this;
     delete monomials;
     monomials = new TMonomialList(*other.monomials);
     return *this;
@@ -411,6 +413,78 @@ TPolynomial TPolynomial::operator*(double number)
         *current.pData *= number;
     }
     return result;
+}
+
+TPolynomial& TPolynomial::operator+=(const TPolynomial& other)
+{
+    *this = *this + other;
+    return *this;
+}
+
+TPolynomial& TPolynomial::operator+=(const TMonomial& monomial)
+{
+    *this = *this + monomial;
+    return *this;
+}
+
+TPolynomial& TPolynomial::operator+=(const TMonomialP& monomial)
+{
+    *this = *this + monomial;
+    return *this;
+}
+
+TPolynomial& TPolynomial::operator+=(double number)
+{
+    *this = *this + number;
+    return *this;
+}
+
+TPolynomial& TPolynomial::operator-=(const TPolynomial& other)
+{
+    *this = *this - other;
+    return *this;
+}
+
+TPolynomial& TPolynomial::operator-=(const TMonomial& monomial)
+{
+    *this = *this - monomial;
+    return *this;
+}
+
+TPolynomial& TPolynomial::operator-=(const TMonomialP& monomial)
+{
+    *this = *this - monomial;
+    return *this;
+}
+
+TPolynomial& TPolynomial::operator-=(double number)
+{
+    *this = *this - number;
+    return *this;
+}
+
+TPolynomial& TPolynomial::operator*=(const TPolynomial& other)
+{
+    *this = *this * other;
+    return *this;
+}
+
+TPolynomial& TPolynomial::operator*=(const TMonomial& monomial)
+{
+    *this = *this * monomial;
+    return *this;
+}
+
+TPolynomial& TPolynomial::operator*=(const TMonomialP& monomial)
+{
+    *this = *this * monomial;
+    return *this;
+}
+
+TPolynomial& TPolynomial::operator*=(double number)
+{
+    *this = *this * number;
+    return *this;
 }
 
 std::ostream& operator<<(std::ostream& stream, const TPolynomial& polynomial)
