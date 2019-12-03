@@ -15,7 +15,7 @@ TMonomialList::iterator TPolynomial::findPrevOrderedDegree(unsigned degree) cons
 
 TMonomialList::iterator TPolynomial::getNextIterator(TMonomialList::iterator iterator) const
 {
-    return iterator++;
+    return ++iterator;
 }
 
 void TPolynomial::add(double coefficient, unsigned degree)
@@ -158,6 +158,7 @@ void TPolynomial::parse(const char* const expression)
         if(str.size() > 0)
             str = str.substr(str.find_first_not_of(' '));
     } while (str.size() > 0);
+    reduce();
 }
 
 const std::string TPolynomial::monomToStr(const TMonomial& monomial) const

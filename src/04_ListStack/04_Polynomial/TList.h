@@ -47,7 +47,7 @@ public:
         TPair(TKey& key, TData*& pData, TList<TKey, TData>::TNode* baseNode, bool found);
     public:
         TKey& key;
-        TData* pData;
+        TData*& pData;
         TPair() = default;
         TPair(const TPair& other) = default;
         TPair(TNode* pNode);
@@ -78,7 +78,7 @@ public:
     void insertAfter(TKey needle, TKey key, TData* pData = nullptr);
     void insertAfter(iterator i, TKey key, TData* pData);
     void remove(TKey needle);
-    void remove(iterator i);
+    void remove(iterator& i);
     void removeAll();
 
     size_t size() const;
@@ -310,15 +310,15 @@ void TList<TKey, TData>::insertBefore(iterator i, TKey key, TData* pData)
         insertToEnd((*i).key, (*i).pData);
         return;
     }
-    TKey needle = (*i).key;
-    if (pFirst->key == needle)
+    TNode* needle = i.pNode;
+    if (pFirst == needle)
     {
         TNode* pNode = newNode(key, pData, pFirst);
         pFirst = pNode;
         return;
     }
     TNode* temp = pFirst;
-    while (temp->pNext && (temp->pNext->key != needle))
+    while (temp->pNext && (temp->pNext != needle))
         temp = temp->pNext;
     if (!temp->pNext)
         throw TListException::NodeNotFound();
@@ -372,12 +372,12 @@ void TList<TKey, TData>::remove(TKey needle)
 }
 
 template<typename TKey, typename TData>
-void TList<TKey, TData>::remove(iterator i)
+void TList<TKey, TData>::remove(iterator& i)
 {
     if (!pFirst || !i.pNode)
         throw TListException::NodeNotFound();
-    TKey needle = i.pNode->key;
-    if (pFirst->key == needle)
+    TNode* needle = i.pNode;
+    if (pFirst == needle)
     {
         TNode* pNode = pFirst;
         pFirst = pFirst->pNext;
@@ -387,15 +387,16 @@ void TList<TKey, TData>::remove(iterator i)
         return;
     }
     TNode* temp = pFirst;
-    while (temp->pNext && (temp->pNext->key != needle))
+    while (temp->pNext && (temp->pNext != needle))
         temp = temp->pNext;
     if (!temp->pNext)
         throw TListException::NodeNotFound();
-    TNode* pNode = temp->pNext;
-    temp->pNext = pNode->pNext;
-    if (pNode->pData)
-        delete pNode->pData;
-    delete pNode;
+    temp->pNext = needle->pNext;
+    if (needle->pData)
+        delete needle->pData;
+    delete needle;
+    i.pNode = nullptr;
+
 }
 
 template<typename TKey, typename TData>
