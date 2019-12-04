@@ -310,7 +310,7 @@ TPolynomial TPolynomial::operator+(const TPolynomial& other)
         TMonomialP current = *i;
         TMonomialP monomial = result.monomials->find(current.key);
         if (monomial)
-            *current.pData += *monomial.pData;
+            *monomial.pData += *current.pData;
         else
             result.add(*current.pData, current.key);
     }
@@ -320,6 +320,8 @@ TPolynomial TPolynomial::operator+(const TPolynomial& other)
 
 TPolynomial TPolynomial::operator+(const TMonomial& monomial)
 {
+    if (!Monomial::checkDegrees(monomial.key))
+        throw Monomial::DegreeOverflow();
     TPolynomial result(*this);
     TMonomialP needle = result.monomials->find(monomial.key);
     if (needle)
@@ -348,7 +350,7 @@ TPolynomial TPolynomial::operator-(const TPolynomial& other)
         TMonomialP current = *i;
         TMonomialP monomial = result.monomials->find(current.key);
         if (monomial)
-            *current.pData -= *monomial.pData;
+            *monomial.pData -= *current.pData;
         else
             result.add(-*current.pData, current.key);
     }
@@ -358,6 +360,8 @@ TPolynomial TPolynomial::operator-(const TPolynomial& other)
 
 TPolynomial TPolynomial::operator-(const TMonomial& monomial)
 {
+    if (!Monomial::checkDegrees(monomial.key))
+        throw Monomial::DegreeOverflow();
     TPolynomial result(*this);
     TMonomialP needle = result.monomials->find(monomial.key);
     if (needle)
@@ -404,6 +408,8 @@ TPolynomial TPolynomial::operator*(const TPolynomial& other)
 
 TPolynomial TPolynomial::operator*(const TMonomial& monomial)
 {
+    if (!Monomial::checkDegrees(monomial.key))
+        throw Monomial::DegreeOverflow();
     TPolynomial result(*this);
     for (TMonomialList::iterator i = monomials->begin(); i != monomials->end(); i++)
     {
@@ -517,11 +523,12 @@ std::ostream& operator<<(std::ostream& stream, const TPolynomial& polynomial)
     stream << polynomial.monomToStr(Monomial::make(*(*i).pData, (*i).key));
     for (i++; i != polynomial.monomials->end(); i++)
     {
-        if ((*(*i).pData >= 0))
+        TMonomialP monomial = *i;
+        if ((*monomial.pData >= 0))
             stream << " + ";
         else
             stream << " - ";
-        stream << polynomial.monomToStr(Monomial::make(fabs(*(*i).pData), (*i).key));
+        stream << polynomial.monomToStr(Monomial::make(fabs(*monomial.pData), monomial.key));
     }
     return stream;
 }
