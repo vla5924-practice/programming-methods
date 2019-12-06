@@ -5,7 +5,7 @@
 #include <exception>
 #include <string>
 
-template <typename TNodeTypename, typename TPairTypename>
+template <typename TNodeTypename>
 class TListIterator : public std::iterator<std::input_iterator_tag, TNodeTypename>
 {
     template <typename, typename> friend class TList;
@@ -16,7 +16,7 @@ public:
     ~TListIterator() = default;
     bool operator!=(TListIterator const& other) const;
     bool operator==(TListIterator const& other) const;
-    typename TPairTypename operator*() const;
+    typename TNodeTypename* operator*() const;
     TListIterator operator++();
     TListIterator operator++(int);
 };
@@ -25,52 +25,32 @@ template <typename TKey, typename TData>
 class TList
 {
 public:
-    struct TNode
+    class TNode
     {
+        template <typename, typename> friend class TList;
+        template <typename> friend class TListIterator;
+        TNode* pNext;
+    public:
         TKey key;
         TData* pData;
-        TNode* pNext = nullptr;
         explicit TNode(TKey key = 0, TData* pData = nullptr, TNode* pNext = nullptr);
         TNode(TKey key, TData data, TNode* pNext = nullptr);
         TNode(const TNode& other);
     };
-    struct TPair
-    {
-    private:
-        template<typename, typename> friend class TList;
-        template<typename, typename> friend class TListIterator;
-        static TKey mockKey;
-        static TData* mockData;
-        bool found = true;
-        TNode* baseNode = nullptr;
-        explicit TPair(bool found);
-        TPair(TKey& key, TData*& pData, TList<TKey, TData>::TNode* baseNode, bool found);
-    public:
-        TKey& key;
-        TData*& pData;
-        TPair() = default;
-        TPair(const TPair& other) = default;
-        TPair(TNode* pNode);
-        TPair(TKey& key, TData*& pData);
-        ~TPair() = default;
-        operator bool() const;
-        typename TPair& operator=(const TPair& other);
-    };
 private:
     TList::TNode* pFirst;
     inline typename TNode* newNode(TKey key, TData* pData, TNode* pNext = nullptr) const;
-    typename TNode* findNode(TKey needle) const;
 public:
     TList();
     TList(const TList& other);
     TList(const TList<TKey, TData>::TNode* firstNode);
     ~TList();
 
-    typedef TListIterator<TList::TNode, TList::TPair> iterator;
-    typedef TListIterator<TList::TNode, TList::TPair> const_iterator;
+    typedef TListIterator<TList::TNode> iterator;
+    typedef TListIterator<TList::TNode> const_iterator;
 
-    typename TPair find(TKey needle);
-    typename TPair getFirst();
+    typename TNode* find(TKey needle);
+    typename TNode* getFirst();
     void insertToStart(TKey key, TData* pData = nullptr);
     void insertToEnd(TKey key, TData* pData = nullptr);
     void insertBefore(TKey needle, TKey key, TData* pData = nullptr);
@@ -123,48 +103,6 @@ template<typename TKey, typename TData>
 TList<TKey, TData>::TNode::TNode(const TNode& other)
     : key(other.key), pData(other.pData ? new TData(*(other.pData)) : nullptr), pNext(pNext)
 {
-}
-
-// ------------------------------------------------------------------
-// ------------------------------ TPAIR -----------------------------
-// ------------------------------------------------------------------
-
-template<typename TKey, typename TData>
-TKey TList<TKey, TData>::TPair::mockKey = 0;
-
-template<typename TKey, typename TData>
-TData* TList<TKey, TData>::TPair::mockData = nullptr;
-
-template<typename TKey, typename TData>
-TList<TKey, TData>::TPair::TPair(TList<TKey, TData>::TNode* pNode)
-    : key(pNode ? pNode->key : mockKey), pData(pNode ? pNode->pData : mockData), 
-      baseNode(pNode), found(pNode) {}
-
-template<typename TKey, typename TData>
-TList<TKey, TData>::TPair::TPair(TKey& key, TData*& pData)
-    : key(key), pData(pData) {}
-
-template<typename TKey, typename TData>
-TList<TKey, TData>::TPair::TPair(TKey& key, TData*& pData, TNode* baseNode, bool found)
-    : key(key), pData(pData), baseNode(baseNode), found(found) {}
-
-template<typename TKey, typename TData>
-TList<TKey, TData>::TPair::TPair(bool found)
-    : key(mockKey), pData(mockData), found(found) {}
-
-template<typename TKey, typename TData>
-TList<TKey, TData>::TPair::operator bool() const
-{
-    return found;
-}
-
-template<typename TKey, typename TData>
-typename TList<TKey, TData>::TPair& TList<TKey, TData>::TPair::operator=(const TPair& other)
-{
-    key = other.key;
-    pData = other.pData;
-    found = other.found;
-    return *this;
 }
 
 // ------------------------------------------------------------------
@@ -224,7 +162,7 @@ TList<TKey, TData>::~TList()
 }
 
 template<typename TKey, typename TData>
-typename TList<TKey, TData>::TNode* TList<TKey, TData>::findNode(TKey needle) const
+typename TList<TKey, TData>::TNode* TList<TKey, TData>::find(TKey needle)
 {
     if (!pFirst)
         return nullptr;
@@ -232,31 +170,16 @@ typename TList<TKey, TData>::TNode* TList<TKey, TData>::findNode(TKey needle) co
     while (temp)
     {
         if (temp->key == needle)
-            return temp;
+            temp;
         temp = temp->pNext;
     }
     return nullptr;
 }
 
 template<typename TKey, typename TData>
-typename TList<TKey, TData>::TPair TList<TKey, TData>::find(TKey needle)
+typename TList<TKey, TData>::TNode* TList<TKey, TData>::getFirst()
 {
-    if (!pFirst)
-        return TPair(false);
-    TNode* temp = pFirst;
-    while (temp)
-    {
-        if (temp->key == needle)
-            return TPair(temp->key, temp->pData, temp, true);
-        temp = temp->pNext;
-    }
-    return TPair(false);
-}
-
-template<typename TKey, typename TData>
-typename TList<TKey, TData>::TPair TList<TKey, TData>::getFirst()
-{
-    return pFirst ? TPair(pFirst->key, pFirst->pData) : TPair(false);
+    return pFirst;
 }
 
 template<typename TKey, typename TData>
@@ -503,42 +426,42 @@ typename TList<TKey, TData>::const_iterator TList<TKey, TData>::end() const
 // -------------------------- TLISTITERATOR -------------------------
 // ------------------------------------------------------------------
 
-template <typename TNodeTypename, typename TPairTypename>
-TListIterator<TNodeTypename, TPairTypename>::TListIterator(TNodeTypename* pNode) : pNode(pNode) {}
+template <typename TNodeTypename>
+TListIterator<TNodeTypename>::TListIterator(TNodeTypename* pNode) : pNode(pNode) {}
 
-template <typename TNodeTypename, typename TPairTypename>
-bool TListIterator<TNodeTypename, TPairTypename>::operator!=(TListIterator const& other) const
+template <typename TNodeTypename>
+bool TListIterator<TNodeTypename>::operator!=(TListIterator const& other) const
 {
     return pNode != other.pNode;
 }
 
-template <typename TNodeTypename, typename TPairTypename>
-bool TListIterator<TNodeTypename, TPairTypename>::operator==(TListIterator const& other) const
+template <typename TNodeTypename>
+bool TListIterator<TNodeTypename>::operator==(TListIterator const& other) const
 {
     return pNode == other.pNode;
 }
 
-template <typename TNodeTypename, typename TPairTypename>
-typename TPairTypename TListIterator<TNodeTypename, TPairTypename>::operator*() const
+template <typename TNodeTypename>
+typename TNodeTypename* TListIterator<TNodeTypename>::operator*() const
 {
-    return TPairTypename(pNode);
+    return pNode;
 }
 
-template <typename TNodeTypename, typename TPairTypename>
-TListIterator<TNodeTypename, TPairTypename> TListIterator<TNodeTypename, TPairTypename>::operator++()
+template <typename TNodeTypename>
+TListIterator<TNodeTypename> TListIterator<TNodeTypename>::operator++()
 {
     if (pNode)
         pNode = pNode->pNext;
     return *this;
 }
 
-template <typename TNodeTypename, typename TPairTypename>
-TListIterator<TNodeTypename, TPairTypename> TListIterator<TNodeTypename, TPairTypename>::operator++(int)
+template <typename TNodeTypename>
+TListIterator<TNodeTypename> TListIterator<TNodeTypename>::operator++(int)
 {
     TNodeTypename* temp = pNode;
     if (pNode)
         pNode = pNode->pNext;
-    return TListIterator<TNodeTypename, TPairTypename>(temp);
+    return TListIterator<TNodeTypename>(temp);
 }
 
 #endif // !_TLIST_H_

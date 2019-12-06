@@ -24,14 +24,14 @@ void testMode()
 {
     srand((unsigned)time(nullptr));
     TPolynomial poly[2];
-    TMonomial monomial = Monomial::make(RND(-10, 10), RND(0, 999));
+    TMonomial monomial = TMonomial(static_cast<double>(RND(-10, 10)), RND(0, 999));
     double number = RND(-10, 10);
     int sizes[2] = { RND(3, 6), RND(3, 6) };
     int degree = RND(0, 999);
     for (int i = 0; i < 2; i++)
     {
         for (int j = 0; j < sizes[i]; j++)
-            poly[i] += Monomial::make(RND(-10, 10), RND(0, 999));
+            poly[i] += TMonomial(static_cast<double>(RND(-10, 10)), RND(0, 999));
         std::cout << '(' << i << ") " << poly[i] << '\n';
     }
     std::cout << "(2) " << TPolynomial(monomial) << '\n';
@@ -47,7 +47,7 @@ void testMode()
     {
         std::cout << "(0) * (1) = " << (poly[0] * poly[1]) << '\n';
     }
-    catch (Monomial::DegreeOverflow & e)
+    catch (TMonomial::DegreeOverflow & e)
     {
         std::cerr << e.what() << '\n';
     }
@@ -55,7 +55,7 @@ void testMode()
     {
         std::cout << "(0) * (2) = " << (poly[0] * monomial) << '\n';
     }
-    catch (Monomial::DegreeOverflow & e)
+    catch (TMonomial::DegreeOverflow & e)
     {
         std::cerr << e.what() << '\n';
     }
@@ -99,9 +99,9 @@ void calcMode()
             std::cout << "Parsed: " << lhs << '\n';
             success = true;
         }
-        catch (std::exception& e)
+        catch (...)
         {
-            std::cerr << e.what();
+            std::cerr << "Error.";
             std::cout << " Try again: ";
         }
     } while (!success);
@@ -126,9 +126,9 @@ void calcMode()
             std::cout << "Parsed: " << rhs << '\n';
             success = true;
         }
-        catch (std::exception& e)
+        catch (...)
         {
-            std::cerr << e.what();
+            std::cerr << "Error.";
             std::cout << " Try again: ";
         }
     } while (!success);
@@ -142,9 +142,9 @@ void calcMode()
         else
             std::cout << (lhs * rhs);
     }
-    catch (std::exception& e)
+    catch (...)
     {
-        std::cerr << e.what();
+        std::cerr << "Error.";
     }
     std::cout << '\n';
 }

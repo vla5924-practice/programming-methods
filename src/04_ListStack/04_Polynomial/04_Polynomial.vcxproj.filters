@@ -14,9 +14,6 @@
     <ClCompile Include="04_Polynomial.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Monomial.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="TPolynomial.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -28,7 +25,7 @@
     <ClInclude Include="TList.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Monomial.h">
+    <ClInclude Include="TMonomial.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

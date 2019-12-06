@@ -153,12 +153,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="04_Polynomial.cpp" />
-    <ClCompile Include="Monomial.cpp" />
     <ClCompile Include="TPolynomial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TList.h" />
-    <ClInclude Include="Monomial.h" />
+    <ClInclude Include="TMonomial.h" />
     <ClInclude Include="TPolynomial.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

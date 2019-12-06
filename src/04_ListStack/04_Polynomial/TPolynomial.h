@@ -2,7 +2,7 @@
 #define _TPOLYNOMIAL_H_
 
 #include <iostream>
-#include "Monomial.h"
+#include "TMonomial.h"
 
 class TPolynomial
 {
@@ -11,7 +11,6 @@ class TPolynomial
     TMonomialList::iterator getNextIterator(TMonomialList::iterator iterator) const;
     void add(double coefficient, unsigned degree);
     void add(double* pCoef, unsigned degree);
-    void removeNulls();
     void reduce();
     void nullify();
     void parse(const char* const expression);
@@ -25,7 +24,6 @@ public:
     TPolynomial();
     TPolynomial(const char* const expression);
     TPolynomial(const TMonomial& monomial);
-    TPolynomial(const TMonomialP& monomial);
     TPolynomial(double number);
     TPolynomial(const TPolynomial& other);
     TPolynomial(const TMonomialList& list);
@@ -34,28 +32,22 @@ public:
     TPolynomial& operator=(const TPolynomial& other);
     TPolynomial operator+(const TPolynomial& other);
     TPolynomial operator+(const TMonomial& monomial);
-    TPolynomial operator+(const TMonomialP& monomial);
     TPolynomial operator+(double number);
     TPolynomial operator-(const TPolynomial& other);
     TPolynomial operator-(const TMonomial& monomial);
-    TPolynomial operator-(const TMonomialP& monomial);
     TPolynomial operator-(double number);
     TPolynomial operator*(const TPolynomial& other);
     TPolynomial operator*(const TMonomial& monomial);
-    TPolynomial operator*(const TMonomialP& monomial);
     TPolynomial operator*(double number);
 
     TPolynomial& operator+=(const TPolynomial& other);
     TPolynomial& operator+=(const TMonomial& monomial);
-    TPolynomial& operator+=(const TMonomialP& monomial);
     TPolynomial& operator+=(double number);
     TPolynomial& operator-=(const TPolynomial& other);
     TPolynomial& operator-=(const TMonomial& monomial);
-    TPolynomial& operator-=(const TMonomialP& monomial);
     TPolynomial& operator-=(double number);
     TPolynomial& operator*=(const TPolynomial& other);
     TPolynomial& operator*=(const TMonomial& monomial);
-    TPolynomial& operator*=(const TMonomialP& monomial);
     TPolynomial& operator*=(double number);
 
     friend std::ostream& operator<<(std::ostream& stream, const TPolynomial& polynomial);
