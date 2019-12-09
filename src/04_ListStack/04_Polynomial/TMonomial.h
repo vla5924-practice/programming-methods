@@ -14,33 +14,40 @@ typedef TMonomialList::TNode TMonomial;
 template<>
 class TList<unsigned, double>::TNode
 {
+public:
+	class DegreeOverflow : std::exception
+	{
+		const std::string whatStr = "Degree cannot be greater than 9.";
+	public:
+		virtual const char* what() { return whatStr.c_str(); }
+	};
+
+	class DegreeUnequality : std::exception
+	{
+		const std::string whatStr = "Degrees are not equal.";
+	public:
+		virtual const char* what() { return whatStr.c_str(); }
+	};
+
+private:
     template <typename, typename> friend class TList;
     template <typename> friend class TListIterator;
     TNode* pNext;
+
     bool checkDegrees(unsigned degrees) const
     {
         return degrees <= 999U;
     }
+
     bool checkDegrees(unsigned x, unsigned y, unsigned z) const
     {
         return (x <= 9) && (y <= 9) && (z <= 9);
     }
-public:
-    class DegreeOverflow : std::exception
-    {
-        const std::string whatStr = "Degree cannot be greater than 9.";
-    public:
-        virtual const char* what() { return whatStr.c_str(); }
-    };
-    class DegreeUnequality : std::exception
-    {
-        const std::string whatStr = "Degrees are not equal.";
-    public:
-        virtual const char* what() { return whatStr.c_str(); }
-    };
 
+public:
     unsigned key;
     double data;
+
     explicit TNode(unsigned degree = 0U, double coefficient = 0., TNode* pNext_ = nullptr)
     {
         if (degree > 999U)
@@ -49,14 +56,9 @@ public:
         data = coefficient;
         pNext = pNext_;
     }
-    TNode(const TNode& other)
-        : key(other.key), data(other.data), pNext(other.pNext)
-    {
+	TNode(const TNode&) = default;
+	TNode(double coefficient, unsigned degree) : TNode(degree, coefficient) {};
 
-    }
-    TNode(double coefficient, unsigned degree) : TNode(degree, coefficient)
-    {
-    }
     TNode operator+(const TNode& other) const
     {
         if (key != other.key)
@@ -64,6 +66,7 @@ public:
         double coefficient = data + other.data;
         return TMonomial(key, coefficient, pNext);
     }
+
     TNode operator-(const TNode& other) const
     {
         if (key != other.key)
@@ -71,6 +74,7 @@ public:
         double coefficient = data - other.data;
         return TMonomial(key, coefficient, pNext);
     }
+
     TNode operator*(const TNode& other) const
     {
         if (!checkDegrees(key + other.key))
@@ -84,14 +88,17 @@ public:
 		double coefficient = data * other.data;
         return TMonomial(degree, coefficient, pNext);
     }
+
     TNode operator*(double number) const
     {
         return TMonomial(key, data * number, pNext);
     }
+
 	TNode operator+() const
 	{
 		return *this;
 	}
+
 	TNode operator-() const
 	{
 		return TNode(key, -data, pNext);
