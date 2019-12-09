@@ -40,10 +40,10 @@ void TPolynomial::addNonzero(TMonomial* primary, const TMonomial* secondary, std
 		*primary = op(primary, secondary);
 		if (primary->data == 0)
 			monomials->remove(primary->key);
+		return;
 	}
-	else
-		if (secondary->data != 0)
-			add(secondary->data, secondary->key);
+	if (secondary->data != 0)
+		add(secondary->data, secondary->key);
 }
 
 void TPolynomial::reduce()
@@ -282,7 +282,7 @@ TPolynomial TPolynomial::operator+(const TPolynomial& other)
     {
         TMonomial* current = *i;
         TMonomial* monomial = result.monomials->find(current->key);
-		result.addNonzero(monomial, current, LAMBDA_OP(*lhs + *rhs));
+		result.addNonzero(monomial, current, LAMBDA_OP(*left + *right));
     }
     return result;
 }
@@ -291,12 +291,7 @@ TPolynomial TPolynomial::operator+(const TMonomial& monomial)
 {
     TPolynomial result(*this);
     TMonomial* needle = result.monomials->find(monomial.key);
-    /*if (needle)
-        *needle = *needle + monomial; // remove nulls...
-    else
-        if(monomial.data)
-            result.add(monomial.data, monomial.key);*/
-	result.addNonzero(needle, &monomial, LAMBDA_OP(*lhs + *rhs));
+	result.addNonzero(needle, &monomial, LAMBDA_OP(*left + *right));
     return result;
 }
 
@@ -312,14 +307,7 @@ TPolynomial TPolynomial::operator-(const TPolynomial& other)
     {
         TMonomial* current = *i;
         TMonomial* monomial = result.monomials->find(current->key);
-        /*if (monomial)
-        {
-            *monomial = *monomial - *current;
-            // remove nulls here
-        }
-        else
-            result.add(-current->data, current->key);*/
-		result.addNonzero(monomial, &-*current, LAMBDA_OP(*lhs + *rhs));
+		result.addNonzero(monomial, &-*current, LAMBDA_OP(*left + *right));
     }
     return result;
 }
@@ -328,16 +316,7 @@ TPolynomial TPolynomial::operator-(const TMonomial& monomial)
 {
     TPolynomial result(*this);
     TMonomial* needle = result.monomials->find(monomial.key);
-    /*if (needle)
-    {
-        *needle = *needle - monomial;
-        if (needle->data == 0U)
-            result.monomials->remove(needle->key);
-    }
-    else
-        if(monomial.data)
-            result.add(-monomial.data, monomial.key);*/
-	result.addNonzero(needle, &-monomial, LAMBDA_OP(*lhs + *rhs));
+	result.addNonzero(needle, &-monomial, LAMBDA_OP(*left + *right));
     return result;
 }
 
@@ -445,7 +424,7 @@ TPolynomial& TPolynomial::operator*=(double number)
 std::ostream& operator<<(std::ostream& stream, const TPolynomial& polynomial)
 {
     if (polynomial.monomials->empty())
-        return stream;
+        return stream << "0";
     TMonomialList::iterator i = polynomial.monomials->begin();
     stream << polynomial.monomToStr(TMonomial((*i)->data, (*i)->key));
     for (i++; i != polynomial.monomials->end(); i++)

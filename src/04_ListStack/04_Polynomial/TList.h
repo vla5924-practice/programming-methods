@@ -156,7 +156,7 @@ typename TList<TKey, TData>::TNode* TList<TKey, TData>::find(TKey needle)
     while (temp)
     {
         if (temp->key == needle)
-            temp;
+            return temp;
         temp = temp->pNext;
     }
     return nullptr;

@@ -4,7 +4,7 @@
 #include <iostream>
 #include <functional>
 #include "TMonomial.h"
-#define LAMBDA_OP(X) ([](const TMonomial* lhs, const TMonomial* rhs)->TMonomial { return (X); })
+#define LAMBDA_OP(F) ([](const TMonomial* left, const TMonomial* right)->TMonomial { return (F); })
 
 class TPolynomial
 {
