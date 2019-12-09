@@ -32,14 +32,12 @@ public:
         TNode* pNext;
     public:
         TKey key;
-        TData* pData;
-        explicit TNode(TKey key = 0, TData* pData = nullptr, TNode* pNext = nullptr);
-        TNode(TKey key, TData data, TNode* pNext = nullptr);
+        TData data;
+        explicit TNode(TKey key = 0, TData data = 0, TNode* pNext = nullptr);
         TNode(const TNode& other);
     };
 private:
     TList::TNode* pFirst;
-    inline typename TNode* newNode(TKey key, TData* pData, TNode* pNext = nullptr) const;
 public:
     TList();
     TList(const TList& other);
@@ -51,12 +49,12 @@ public:
 
     typename TNode* find(TKey needle);
     typename TNode* getFirst();
-    void insertToStart(TKey key, TData* pData = nullptr);
-    void insertToEnd(TKey key, TData* pData = nullptr);
-    void insertBefore(TKey needle, TKey key, TData* pData = nullptr);
-    void insertBefore(iterator i, TKey key, TData* pData);
-    void insertAfter(TKey needle, TKey key, TData* pData = nullptr);
-    void insertAfter(iterator i, TKey key, TData* pData);
+    void insertToStart(TKey key, TData data = nullptr);
+    void insertToEnd(TKey key, TData data = nullptr);
+    void insertBefore(TKey needle, TKey key, TData data = 0);
+    void insertBefore(iterator i, TKey key, TData data = 0);
+    void insertAfter(TKey needle, TKey key, TData data = 0);
+    void insertAfter(iterator i, TKey key, TData data = 0);
     void remove(TKey needle);
     void remove(iterator& i);
     void removeAll();
@@ -88,32 +86,20 @@ namespace TListException
 // ------------------------------------------------------------------
 
 template<typename TKey, typename TData>
-TList<TKey, TData>::TNode::TNode(TKey key, TData* pData, TList<TKey, TData>::TNode* pNext)
-    : key(key), pData(pData), pNext(pNext)
-{
-}
-
-template<typename TKey, typename TData>
 TList<TKey, TData>::TNode::TNode(TKey key, TData data, TList<TKey, TData>::TNode* pNext)
-    : key(key), pData(new TData(data)), pNext(pNext)
+    : key(key), data(data), pNext(pNext)
 {
 }
 
 template<typename TKey, typename TData>
 TList<TKey, TData>::TNode::TNode(const TNode& other)
-    : key(other.key), pData(other.pData ? new TData(*(other.pData)) : nullptr), pNext(pNext)
+    : key(other.key), data(other.data), pNext(pNext)
 {
 }
 
 // ------------------------------------------------------------------
 // ------------------------------ TLIST -----------------------------
 // ------------------------------------------------------------------
-
-template<typename TKey, typename TData>
-inline typename TList<TKey, TData>::TNode* TList<TKey, TData>::newNode(TKey key, TData* pData, TNode* pNext) const
-{
-    return new TNode(key, pData ? new TData(*pData) : nullptr, pNext);
-}
 
 template<typename TKey, typename TData>
 TList<TKey, TData>::TList()
@@ -126,12 +112,12 @@ TList<TKey, TData>::TList(const TList& other) : TList()
 {
     if (!other.pFirst)
         return;
-    pFirst = newNode(other.pFirst->key, other.pFirst->pData);
+    pFirst = new TNode(other.pFirst->key, other.pFirst->data);
     TNode* temp = other.pFirst->pNext;
     TNode* prev = pFirst;
     while (temp)
     {
-        TNode* pNode = newNode(temp->key, temp->pData);
+        TNode* pNode = new TNode(temp->key, temp->data);
         prev->pNext = pNode;
         prev = pNode;
         temp = temp->pNext;
@@ -143,12 +129,12 @@ TList<TKey, TData>::TList(const TList<TKey, TData>::TNode* firstNode) : TList()
 {
     if (!firstNode)
         return;
-    pFirst = newNode(firstNode->key, firstNode->pData);
+    pFirst = new TNode(firstNode->key, firstNode->data);
     TNode* temp = firstNode->pNext;
     TNode* prev = pFirst;
     while (temp)
     {
-        TNode* pNode = newNode(temp.key, temp.pData);
+        TNode* pNode = new TNode(temp.key, temp.data);
         prev->pNext = pNode;
         prev = pNode;
         temp = temp->pNext;
@@ -183,34 +169,34 @@ typename TList<TKey, TData>::TNode* TList<TKey, TData>::getFirst()
 }
 
 template<typename TKey, typename TData>
-void TList<TKey, TData>::insertToStart(TKey key, TData* pData)
+void TList<TKey, TData>::insertToStart(TKey key, TData data)
 {
-    TNode* pNode = newNode(key, pData, pFirst);
+    TNode* pNode = new TNode(key, data, pFirst);
     pFirst = pNode;
 }
 
 template<typename TKey, typename TData>
-void TList<TKey, TData>::insertToEnd(TKey key, TData* pData)
+void TList<TKey, TData>::insertToEnd(TKey key, TData data)
 {
     if (!pFirst)
     {
-        pFirst = newNode(key, pData);
+        pFirst = new TNode(key, data);
         return;
     }
     TNode* temp = pFirst;
     while (temp->pNext)
         temp = temp->pNext;
-    temp->pNext = newNode(key, pData, nullptr);
+    temp->pNext = new TNode(key, data, nullptr);
 }
 
 template<typename TKey, typename TData>
-void TList<TKey, TData>::insertBefore(TKey needle, TKey key, TData* pData)
+void TList<TKey, TData>::insertBefore(TKey needle, TKey key, TData data)
 {
     if (!pFirst)
         throw TListException::NodeNotFound();
     if (pFirst->key == needle)
     {
-        TNode* pNode = newNode(key, pData, pFirst);
+        TNode* pNode = new TNode(key, data, pFirst);
         pFirst = pNode;
         return;
     }
@@ -219,24 +205,24 @@ void TList<TKey, TData>::insertBefore(TKey needle, TKey key, TData* pData)
         temp = temp->pNext;
     if (!temp->pNext)
         throw TListException::NodeNotFound();
-    TNode* pNode = newNode(key, pData, temp->pNext);
+    TNode* pNode = new TNode(key, data, temp->pNext);
     temp->pNext = pNode;
 }
 
 template<typename TKey, typename TData>
-void TList<TKey, TData>::insertBefore(iterator i, TKey key, TData* pData)
+void TList<TKey, TData>::insertBefore(iterator i, TKey key, TData data)
 {
     if (!pFirst)
         throw TListException::NodeNotFound();
     if (!i.pNode)
     {
-        insertToEnd((*i).key, (*i).pData);
+        insertToEnd((*i).key, (*i).data);
         return;
     }
     TNode* needle = i.pNode;
     if (pFirst == needle)
     {
-        TNode* pNode = newNode(key, pData, pFirst);
+        TNode* pNode = new TNode(key, data, pFirst);
         pFirst = pNode;
         return;
     }
@@ -245,26 +231,26 @@ void TList<TKey, TData>::insertBefore(iterator i, TKey key, TData* pData)
         temp = temp->pNext;
     if (!temp->pNext)
         throw TListException::NodeNotFound();
-    TNode* pNode = newNode(key, pData, temp->pNext);
+    TNode* pNode = new TNode(key, data, temp->pNext);
     temp->pNext = pNode;
 }
 
 template<typename TKey, typename TData>
-void TList<TKey, TData>::insertAfter(iterator i, TKey key, TData* pData)
+void TList<TKey, TData>::insertAfter(iterator i, TKey key, TData data)
 {
     if (!i.pNode)
         throw TListException::NodeNotFound();
-    TNode* pNode = newNode(key, pData, i.pNode->pNext);
+    TNode* pNode = new TNode(key, data, i.pNode->pNext);
     i.pNode->pNext = pNode;
 }
 
 template<typename TKey, typename TData>
-void TList<TKey, TData>::insertAfter(TKey needle, TKey key, TData* pData)
+void TList<TKey, TData>::insertAfter(TKey needle, TKey key, TData data)
 {
     TNode* prev = findNode(needle);
     if (!prev)
         throw TListException::NodeNotFound();
-    TNode* pNode = newNode(key, pData, prev->pNext);
+    TNode* pNode = new TNode(key, data, prev->pNext);
     prev->pNext = pNode;
 }
 
@@ -277,8 +263,6 @@ void TList<TKey, TData>::remove(TKey needle)
     {
         TNode* pNode = pFirst;
         pFirst = pFirst->pNext;
-        if (pNode->pData)
-            delete pNode->pData;
         delete pNode;
         return;
     }
@@ -289,8 +273,6 @@ void TList<TKey, TData>::remove(TKey needle)
         throw TListException::NodeNotFound();
     TNode* pNode = temp->pNext;
     temp->pNext = pNode->pNext;
-    if (pNode->pData)
-        delete pNode->pData;
     delete pNode;
 }
 
@@ -304,8 +286,6 @@ void TList<TKey, TData>::remove(iterator& i)
     {
         TNode* pNode = pFirst;
         pFirst = pFirst->pNext;
-        if (pNode->pData)
-            delete pNode->pData;
         delete pNode;
         return;
     }
@@ -315,8 +295,6 @@ void TList<TKey, TData>::remove(iterator& i)
     if (!temp->pNext)
         throw TListException::NodeNotFound();
     temp->pNext = needle->pNext;
-    if (needle->pData)
-        delete needle->pData;
     delete needle;
     i.pNode = nullptr;
 
@@ -332,8 +310,6 @@ void TList<TKey, TData>::removeAll()
     {
         TNode* pNode = temp;
         temp = temp->pNext;
-        if (pNode->pData)
-            delete pNode->pData;
         delete pNode;
     }
     pFirst = nullptr;
@@ -366,8 +342,8 @@ void TList<TKey, TData>::output(std::ostream& stream, const char* separator, con
     TNode* temp = pFirst;
     while (temp)
     {
-        if (temp->pData)
-            stream << *(temp->pData);
+        if (temp->data)
+            stream << *(temp->data);
         else
             stream << "nullptr";
         stream << separator;
@@ -384,8 +360,8 @@ void TList<TKey, TData>::outputRaw(std::ostream& stream) const
     while (temp)
     {
         stream << "    {\n        " << temp->key << "\n        ";
-        if (temp->pData)
-            stream << *(temp->pData);
+        if (temp->data)
+            stream << *(temp->data);
         else
             stream << "nullptr";
         stream << "\n    }\n";

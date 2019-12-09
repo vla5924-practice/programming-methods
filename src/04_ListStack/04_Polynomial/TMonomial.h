@@ -17,11 +17,11 @@ class TList<unsigned, double>::TNode
     template <typename, typename> friend class TList;
     template <typename> friend class TListIterator;
     TNode* pNext;
-    bool checkDegrees(unsigned degrees)
+    bool checkDegrees(unsigned degrees) const
     {
         return degrees <= 999U;
     }
-    bool checkDegrees(unsigned x, unsigned y, unsigned z)
+    bool checkDegrees(unsigned x, unsigned y, unsigned z) const
     {
         return (x <= 9) && (y <= 9) && (z <= 9);
     }
@@ -40,46 +40,38 @@ public:
     };
 
     unsigned key;
-    double* pData;
-    explicit TNode(unsigned key_ = 0U, double* pData_ = nullptr, TNode* pNext_ = nullptr)
+    double data;
+    explicit TNode(unsigned degree = 0U, double coefficient = 0., TNode* pNext_ = nullptr)
     {
-        if (key_ > 999U)
+        if (degree > 999U)
             throw DegreeOverflow();
-        key = key_;
-        pData = pData_ ? pData_ : new double(0.);
-        pNext = pNext_;
-    }
-    TNode(unsigned key_, double data, TNode* pNext_ = nullptr)
-    {
-        if (key_ > 999U)
-            throw DegreeOverflow();
-        key = key_;
-        pData = new double(data);
+		key = degree;
+        data = coefficient;
         pNext = pNext_;
     }
     TNode(const TNode& other)
-        : key(other.key), pData(other.pData ? new double(*(other.pData)) : nullptr), pNext(other.pNext)
+        : key(other.key), data(other.data), pNext(other.pNext)
     {
 
     }
     TNode(double coefficient, unsigned degree) : TNode(degree, coefficient)
     {
     }
-    TNode operator+(const TNode& other)
+    TNode operator+(const TNode& other) const
     {
         if (key != other.key)
             throw DegreeUnequality();
-        double coefficient = *pData + *other.pData;
+        double coefficient = data + other.data;
         return TMonomial(key, coefficient, pNext);
     }
-    TNode operator-(const TNode& other)
+    TNode operator-(const TNode& other) const
     {
         if (key != other.key)
             throw DegreeUnequality();
-        double coefficient = *pData - *other.pData;
+        double coefficient = data - other.data;
         return TMonomial(key, coefficient, pNext);
     }
-    TNode operator*(const TNode& other)
+    TNode operator*(const TNode& other) const
     {
         if (!checkDegrees(key + other.key))
             throw DegreeOverflow();
@@ -89,13 +81,21 @@ public:
         if (!checkDegrees(x, y, z))
             throw DegreeOverflow();
         unsigned degree = MAKEDEG(x, y, z);
-        double coefficient = (*pData) * (*other.pData);
+		double coefficient = data * other.data;
         return TMonomial(degree, coefficient, pNext);
     }
-    TNode operator*(double number)
+    TNode operator*(double number) const
     {
-        return TMonomial(key, *pData * number, pNext);
+        return TMonomial(key, data * number, pNext);
     }
+	TNode operator+() const
+	{
+		return *this;
+	}
+	TNode operator-() const
+	{
+		return TNode(key, -data, pNext);
+	}
 };
 
 #endif //!_TMONOMIAL_H_
