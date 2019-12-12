@@ -2,9 +2,7 @@
 #define _TPOLYNOMIAL_H_
 
 #include <iostream>
-#include <functional>
 #include "TMonomial.h"
-#define LAMBDA_OP(F) ([](const TMonomial* left, const TMonomial* right)->TMonomial { return (F); })
 
 class TPolynomial
 {
@@ -12,7 +10,7 @@ class TPolynomial
     TMonomialList::iterator findPrevOrderedDegree(unsigned degree) const;
     TMonomialList::iterator getNextIterator(TMonomialList::iterator iterator) const;
     void add(double coefficient, unsigned degree);
-    void addNonzero(TMonomial* primary, const TMonomial* secondary, std::function<TMonomial(const TMonomial*, const TMonomial*)> op);
+    void addNonzero(TMonomial* primary, const TMonomial* secondary);
     void reduce();
     void nullify();
     void parse(const char* const expression);

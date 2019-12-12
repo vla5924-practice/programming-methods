@@ -33,16 +33,17 @@ void TPolynomial::add(double coefficient, unsigned degree)
         monomials->insertToStart(degree, coefficient);
 }
 
-void TPolynomial::addNonzero(TMonomial* primary, const TMonomial* secondary, std::function<TMonomial(const TMonomial*, const TMonomial*)> op)
+void TPolynomial::addNonzero(TMonomial* primary, const TMonomial* secondary)
 {
 	if (primary)
 	{
-		*primary = op(primary, secondary);
+        if(secondary)
+		    *primary = *primary + *secondary;
 		if (primary->data == 0)
 			monomials->remove(primary->key);
 		return;
 	}
-	if (secondary->data != 0)
+	if (secondary && (secondary->data != 0))
 		add(secondary->data, secondary->key);
 }
 
@@ -206,8 +207,7 @@ const std::string TPolynomial::getFirstUIntNumber(const char* const expression, 
     size_t count = str.find_first_not_of("0123456789+", offset);
     if(count < str.size())
         return str.substr(offset, count);
-    else
-        return str.substr(offset);
+    return str.substr(offset);
 }
 
 unsigned TPolynomial::getDegreeMask(const char* const expression, unsigned& factor) const
@@ -282,7 +282,7 @@ TPolynomial TPolynomial::operator+(const TPolynomial& other)
     {
         TMonomial* current = *i;
         TMonomial* monomial = result.monomials->find(current->key);
-		result.addNonzero(monomial, current, LAMBDA_OP(*left + *right));
+		result.addNonzero(monomial, current);
     }
     return result;
 }
@@ -291,7 +291,7 @@ TPolynomial TPolynomial::operator+(const TMonomial& monomial)
 {
     TPolynomial result(*this);
     TMonomial* needle = result.monomials->find(monomial.key);
-	result.addNonzero(needle, &monomial, LAMBDA_OP(*left + *right));
+	result.addNonzero(needle, &monomial);
     return result;
 }
 
@@ -307,7 +307,7 @@ TPolynomial TPolynomial::operator-(const TPolynomial& other)
     {
         TMonomial* current = *i;
         TMonomial* monomial = result.monomials->find(current->key);
-		result.addNonzero(monomial, &-*current, LAMBDA_OP(*left + *right));
+		result.addNonzero(monomial, &-*current);
     }
     return result;
 }
@@ -316,7 +316,7 @@ TPolynomial TPolynomial::operator-(const TMonomial& monomial)
 {
     TPolynomial result(*this);
     TMonomial* needle = result.monomials->find(monomial.key);
-	result.addNonzero(needle, &-monomial, LAMBDA_OP(*left + *right));
+	result.addNonzero(needle, &-monomial);
     return result;
 }
 
