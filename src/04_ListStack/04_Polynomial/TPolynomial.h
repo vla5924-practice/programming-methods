@@ -12,6 +12,7 @@ class TPolynomial
     void add(double coefficient, unsigned degree);
     void addNonzero(TMonomial* primary, const TMonomial* secondary);
     void reduce();
+    void sort();
     void nullify();
     void parse(const char* const expression);
     const std::string monomToStr(const TMonomial& monomial) const;

@@ -52,6 +52,11 @@ void TPolynomial::reduce()
     for (TMonomialList::iterator i = monomials->begin(); i != monomials->end(); i++)
     {
         TMonomial* control = *i;
+        if (control->data == 0)
+        {
+            monomials->remove(i);
+            continue;
+        }
         for (TMonomialList::iterator j = getNextIterator(i); j != monomials->end(); j++)
         {
             TMonomial* monomial = *j;
@@ -62,6 +67,27 @@ void TPolynomial::reduce()
             }
         }
     }
+}
+
+void TPolynomial::sort()
+{
+    TPolynomial result;
+    if (monomials->empty() || monomials->begin()++ == monomials->end())
+        return;
+    size_t msize = monomials->size();
+    for (size_t n = 1; n <= msize; n++)
+    {
+        TMonomial* maximal = *(monomials->begin());
+        for (TMonomialList::iterator i = monomials->begin()++; i != monomials->end(); i++)
+        {
+            TMonomial* current = *i;
+            if (current->key > maximal->key)
+                maximal = current;
+        }
+        monomials->remove(maximal->key);
+        monomials->insertToEnd(maximal->key, maximal->data);
+    }
+    *monomials = *result.monomials;
 }
 
 void TPolynomial::nullify()
@@ -259,6 +285,8 @@ TPolynomial::TPolynomial(const TPolynomial& other)
 TPolynomial::TPolynomial(const TMonomialList& list)
 {
     monomials = new TMonomialList(list);
+    sort();
+    reduce();
 }
 
 TPolynomial::~TPolynomial()
@@ -297,6 +325,8 @@ TPolynomial TPolynomial::operator+(const TMonomial& monomial)
 
 TPolynomial TPolynomial::operator+(double number)
 {
+    if (number == 0.)
+        return *this;
     return *this + TMonomial(number, 0U);
 }
 
@@ -322,6 +352,8 @@ TPolynomial TPolynomial::operator-(const TMonomial& monomial)
 
 TPolynomial TPolynomial::operator-(double number)
 {
+    if (number == 0.)
+        return *this;
     return *this - TMonomial(number, 0U);
 }
 
@@ -330,13 +362,13 @@ TPolynomial TPolynomial::operator*(const TPolynomial& other)
     TPolynomial result;
     for (TMonomialList::iterator i = monomials->begin(); i != monomials->end(); i++)
     {
-        TMonomial* lhs = *i;
         for (TMonomialList::iterator j = other.monomials->begin(); j != other.monomials->end(); j++)
         {
+            TMonomial* lhs = *i;
             TMonomial* rhs = *j;
-            *lhs = *lhs * (*rhs);
-            if(lhs->data)
-                result.add(lhs->data, lhs->key);
+            TMonomial monomial = *lhs * (*rhs);
+            if(monomial.data)
+                result.add(monomial.data, monomial.key);
         }
     }
     result.reduce();
@@ -353,11 +385,14 @@ TPolynomial TPolynomial::operator*(const TMonomial& monomial)
         if (res.data)
             result.add(res.data, res.key);
     }
+    result.reduce();
     return result;
 }
 
 TPolynomial TPolynomial::operator*(double number)
 {
+    if (number == 0.)
+        return TPolynomial();
     TPolynomial result(*this);
     for (TMonomialList::iterator i = result.monomials->begin(); i != result.monomials->end(); i++)
     {

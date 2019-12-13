@@ -49,8 +49,8 @@ public:
 
     typename TNode* find(TKey needle);
     typename TNode* getFirst();
-    void insertToStart(TKey key, TData data = nullptr);
-    void insertToEnd(TKey key, TData data = nullptr);
+    void insertToStart(TKey key, TData data = 0);
+    void insertToEnd(TKey key, TData data = 0);
     void insertBefore(TKey needle, TKey key, TData data = 0);
     void insertBefore(iterator i, TKey key, TData data = 0);
     void insertAfter(TKey needle, TKey key, TData data = 0);

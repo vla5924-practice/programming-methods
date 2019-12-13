@@ -82,12 +82,17 @@ void testMode()
     {
         std::cerr << e.what();
     }
+    TList<unsigned, double> l;
+    l.insertToEnd(0U, 1);
+    l.insertToEnd(300U, 3);
+    l.insertToEnd(50U, 5);
+    TPolynomial sp = l;
+    std::cout << sp;
 }
 
 void calcMode()
 {
     TPolynomial lhs, rhs;
-    char operation;
     bool success;
     std::cout << "Enter polynom 1: ";
     success = false;
@@ -105,17 +110,6 @@ void calcMode()
             std::cout << " Try again: ";
         }
     } while (!success);
-    std::cout << "Enter operation symbol [+ - *]: ";
-    success = false;
-    do
-    {
-        std::cin >> operation;
-        if ((operation == '+') || (operation == '-') || (operation == '*'))
-            success = true;
-        else
-            std::cout << "Unknown operation. Try again: ";
-    } while (!success);
-    std::cin.ignore(1);
     std::cout << "Enter polynom 2: ";
     success = false;
     do
@@ -132,15 +126,12 @@ void calcMode()
             std::cout << " Try again: ";
         }
     } while (!success);
-    std::cout << "Result: ";
+    std::cout << "Result: \n";
     try
     {
-        if (operation == '+')
-            std::cout << (lhs + rhs);
-        else if (operation == '-')
-            std::cout << (lhs - rhs);
-        else
-            std::cout << (lhs * rhs);
+        std::cout << "(+): " << (lhs + rhs) << '\n';
+        std::cout << "(-): " << (lhs - rhs) << '\n';
+        std::cout << "(*): " << (lhs * rhs) << '\n';
     }
     catch (...)
     {
