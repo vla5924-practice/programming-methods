@@ -71,23 +71,21 @@ void TPolynomial::reduce()
 
 void TPolynomial::sort()
 {
-    TPolynomial result;
     if (monomials->empty() || monomials->begin()++ == monomials->end())
         return;
-    size_t msize = monomials->size();
-    for (size_t n = 1; n <= msize; n++)
+    for (TMonomialList::iterator i = monomials->begin(); i != monomials->end(); i++)
     {
-        TMonomial* maximal = *(monomials->begin());
-        for (TMonomialList::iterator i = monomials->begin()++; i != monomials->end(); i++)
+        TMonomial* prev = *i;
+        for (TMonomialList::iterator j = monomials->begin()++; j != monomials->end(); j++)
         {
-            TMonomial* current = *i;
-            if (current->key > maximal->key)
-                maximal = current;
+            TMonomial* current = *j;
+            if (prev->key > current->key)
+            {
+                std::swap(prev->key, current->key);
+                std::swap(prev->data, current->data);
+            }
         }
-        monomials->remove(maximal->key);
-        monomials->insertToEnd(maximal->key, maximal->data);
     }
-    *monomials = *result.monomials;
 }
 
 void TPolynomial::nullify()

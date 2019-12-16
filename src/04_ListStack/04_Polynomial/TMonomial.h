@@ -32,6 +32,10 @@ public:
 private:
     template <typename, typename> friend class TList;
     template <typename> friend class TListIterator;
+    friend class TPolynomial;
+    friend std::ostream& operator<<(std::ostream& stream, const TPolynomial& polynomial);
+    unsigned key;
+    double data;
     TNode* pNext;
 
     bool checkDegrees(unsigned degrees) const
@@ -45,9 +49,6 @@ private:
     }
 
 public:
-    unsigned key;
-    double data;
-
     explicit TNode(unsigned degree = 0U, double coefficient = 0., TNode* pNext_ = nullptr)
     {
         if (degree > 999U)

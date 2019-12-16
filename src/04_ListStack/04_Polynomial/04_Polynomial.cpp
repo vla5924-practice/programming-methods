@@ -84,8 +84,8 @@ void testMode()
     }
     TList<unsigned, double> l;
     l.insertToEnd(0U, 1);
-    l.insertToEnd(300U, 3);
-    l.insertToEnd(50U, 5);
+    l.insertToEnd(150U, 3);
+    l.insertToEnd(350U, 5);
     TPolynomial sp = l;
     std::cout << sp;
 }
