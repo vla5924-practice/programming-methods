@@ -287,6 +287,7 @@ void TList<TKey, TData>::remove(iterator& i)
         TNode* pNode = pFirst;
         pFirst = pFirst->pNext;
         delete pNode;
+        i.pNode = nullptr;
         return;
     }
     TNode* temp = pFirst;
