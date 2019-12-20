@@ -8,15 +8,19 @@ TMonomialList::iterator TPolynomial::findPrevOrderedDegree(unsigned degree) cons
         if (degree >= first->key)
             return monomials->end();
     }
-    TMonomialList::iterator temp = monomials->begin();
-    for (TMonomialList::iterator i = monomials->begin(); getNextIterator(i) != monomials->end(); i++)
+    TMonomialList::iterator i = monomials->begin();
+    TMonomialList::iterator temp = i;
+    for (; getNextIterator(i) != monomials->end(); i++)
     {
         temp = i;
         TMonomialList::iterator next = getNextIterator(temp);
         if ((*next)->key <= degree)
             return temp;
     }
-    return temp;
+    if (getNextIterator(temp) == monomials->end())
+        return temp;
+    else
+        return i;
 }
 
 TMonomialList::iterator TPolynomial::getNextIterator(TMonomialList::iterator iterator) const
@@ -375,6 +379,8 @@ TPolynomial TPolynomial::operator*(const TPolynomial& other)
 
 TPolynomial TPolynomial::operator*(const TMonomial& monomial)
 {
+    if (monomial.data == 0.)
+        return TPolynomial();
     TPolynomial result(*this);
     for (TMonomialList::iterator i = monomials->begin(); i != monomials->end(); i++)
     {
