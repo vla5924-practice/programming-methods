@@ -17,6 +17,7 @@ int main()
         testMode();
     else
         calcMode();
+    std::cin.ignore(1);
     return 0;
 }
 
@@ -106,7 +107,7 @@ void calcMode()
         }
         catch (...)
         {
-            std::cerr << "Error.";
+            std::cerr << "Syntax Error.";
             std::cout << " Try again: ";
         }
     } while (!success);
@@ -122,7 +123,7 @@ void calcMode()
         }
         catch (...)
         {
-            std::cerr << "Error.";
+            std::cerr << "Syntax Error.";
             std::cout << " Try again: ";
         }
     } while (!success);
@@ -135,7 +136,7 @@ void calcMode()
     }
     catch (...)
     {
-        std::cerr << "Error.";
+        std::cerr << "Degree overflow.";
     }
     std::cout << '\n';
 }
