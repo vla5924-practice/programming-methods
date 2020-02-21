@@ -20,10 +20,11 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{1E87BD73-7E1C-4FF8-BF0C-E97253ED8C74}</ProjectGuid>
+    <ProjectGuid>{9BF8904F-8A0A-4E88-A377-41B97C606E0A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>List</RootNamespace>
+    <RootNamespace>My04Polynomial</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <ProjectName>03_Polynomial</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -91,6 +92,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,10 +153,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="04_List.cpp" />
+    <ClCompile Include="03_Polynomial.cpp" />
+    <ClCompile Include="TPolynomial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TList.h" />
+    <ClInclude Include="TMonomial.h" />
+    <ClInclude Include="TPolynomial.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

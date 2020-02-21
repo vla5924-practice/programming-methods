@@ -11,10 +11,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="04_Polynomial.cpp">
+    <ClCompile Include="TPolynomial.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="TPolynomial.cpp">
+    <ClCompile Include="03_Polynomial.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>

@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "04_ForwardList", "04_ForwardList\04_ForwardList.vcxproj", "{D0A6C73C-EA95-49A9-BBC0-7ED19F181E14}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03_CList", "03_CList\03_CList.vcxproj", "{D0A6C73C-EA95-49A9-BBC0-7ED19F181E14}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "List", "List\List.vcxproj", "{1E87BD73-7E1C-4FF8-BF0C-E97253ED8C74}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03_List", "03_List\03_List.vcxproj", "{1E87BD73-7E1C-4FF8-BF0C-E97253ED8C74}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "04_ListStack", "04_ListStack\04_ListStack.vcxproj", "{55EE4BA0-0033-4005-952F-7E7A800AFF83}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03_ListStack", "03_ListStack\03_ListStack.vcxproj", "{55EE4BA0-0033-4005-952F-7E7A800AFF83}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "04_Polynomial", "04_Polynomial\04_Polynomial.vcxproj", "{9BF8904F-8A0A-4E88-A377-41B97C606E0A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03_Polynomial", "03_Polynomial\03_Polynomial.vcxproj", "{9BF8904F-8A0A-4E88-A377-41B97C606E0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

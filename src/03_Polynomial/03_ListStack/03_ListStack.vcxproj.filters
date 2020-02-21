@@ -11,10 +11,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="04_ListStack.cpp">
+    <ClCompile Include="TPostfixFormProcessor.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="TPostfixFormProcessor.cpp">
+    <ClCompile Include="03_ListStack.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
