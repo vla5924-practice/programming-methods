@@ -4,15 +4,24 @@
     <Filter Include="TestClass">
       <UniqueIdentifier>{971545f3-dbe3-4d8d-92a7-6e77e2f741e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="THeap">
+      <UniqueIdentifier>{e6888849-b9cf-4422-a67d-11c3c817b77d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestClass.h">
       <Filter>TestClass</Filter>
     </ClInclude>
+    <ClInclude Include="THeap.h">
+      <Filter>THeap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestClass.cpp">
       <Filter>TestClass</Filter>
+    </ClCompile>
+    <ClCompile Include="THeap.cpp">
+      <Filter>THeap</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
