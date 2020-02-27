@@ -28,6 +28,7 @@ public:
     THeap(TData* const elements_, int size_, TWeightFunc weight_, int base_ = 2);
     ~THeap();
     TData* pullTop();
+    void sort();
 };
 
 template<typename TData>
@@ -70,10 +71,11 @@ template<typename TData>
 void THeap<TData>::dipDown(int i)
 {
     int minChild = findMinChild(i);
-    while (minChild != i)
+    while ((minChild != -1) and (getWeight(minChild) < getWeight(i)))
     {
         transpose(i, minChild);
-        i = findMinChild(i);
+        i = minChild;
+        minChild = findMinChild(i);
     }
 }
 
@@ -127,6 +129,20 @@ TData* THeap<TData>::pullTop()
     dipDown(0);
     size--;
     return elements + index;
+}
+
+template<typename TData>
+void THeap<TData>::sort()
+{
+    int realSize = size;
+    for (int i = size - 1; i >= 0; i--)
+    {
+        transpose(0, i);
+        size--;
+        dipDown(0);
+        elements[i] = elements[keys[i]];
+    }
+    size = realSize;
 }
 
 #endif
