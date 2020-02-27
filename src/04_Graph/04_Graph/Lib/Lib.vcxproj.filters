@@ -7,6 +7,9 @@
     <Filter Include="THeap">
       <UniqueIdentifier>{e6888849-b9cf-4422-a67d-11c3c817b77d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TSplitSet">
+      <UniqueIdentifier>{819e0503-31c9-4027-9c76-a6ab27377187}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestClass.h">
@@ -14,6 +17,9 @@
     </ClInclude>
     <ClInclude Include="THeap.h">
       <Filter>THeap</Filter>
+    </ClInclude>
+    <ClInclude Include="TSplitSet.h">
+      <Filter>TSplitSet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

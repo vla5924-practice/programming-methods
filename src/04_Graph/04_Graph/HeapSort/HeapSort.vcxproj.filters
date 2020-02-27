@@ -9,7 +9,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="..\x64\Release\Lib.lib">
+    <Library Include="..\x64\Debug\Lib.lib">
       <Filter>Resources</Filter>
     </Library>
   </ItemGroup>

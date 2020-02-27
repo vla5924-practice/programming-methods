@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="TestClass.h" />
     <ClInclude Include="THeap.h" />
+    <ClInclude Include="TSplitSet.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestClass.cpp" />
