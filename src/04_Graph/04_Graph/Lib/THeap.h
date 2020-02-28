@@ -1,54 +1,42 @@
 #ifndef _THEAP_H_
 #define _THEAP_H_
 #include <ciso646>
-#include <functional>
 
 template<typename TData>
 class THeap
 {
 public:
-    typedef std::function<int(const TData&)> TWeightFunc;
     int base;
     int capacity;
     int size;
-    int* keys;
     TData* elements;
-    //int(*weight)(const TData&);
-    TWeightFunc weight;
 
     void transpose(int i, int j);
     int min(int first, int second) const;
-    int getWeight(int i) const;
     int findMinChild(int i) const;
     //void popUp(int i);
     void dipDown(int i);
     void heapify();
 public:
-    THeap(const THeap& other);
-    THeap(TData* const elements_, int size_, TWeightFunc weight_, int base_ = 2);
-    ~THeap();
-    TData* pullTop();
+    THeap(const THeap& other) = default;
+    THeap(TData* elements_, int size_, int base_ = 2);
+    ~THeap() = default;
+    TData pullTop();
     void sort();
 };
 
 template<typename TData>
 void THeap<TData>::transpose(int i, int j)
 {
-    int temp = keys[i];
-    keys[i] = keys[j];
-    keys[j] = temp;
+    TData temp = elements[i];
+    elements[i] = elements[j];
+    elements[j] = temp;
 }
 
 template<typename TData>
 inline int THeap<TData>::min(int first, int second) const
 {
     return first < second ? first : second;
-}
-
-template<typename TData>
-inline int THeap<TData>::getWeight(int i) const
-{
-    return weight(elements[keys[i]]);
 }
 
 template<typename TData>
@@ -61,7 +49,7 @@ int THeap<TData>::findMinChild(int i) const
     lastChild = min(size - 1, i * base + base);
     minChild = firstChild;
     for (int i = firstChild + 1; i <= lastChild; i++)
-        if (getWeight(i) < getWeight(minChild))
+        if (elements[i] < elements[minChild])
             minChild = i;
     return minChild;
 
@@ -71,7 +59,7 @@ template<typename TData>
 void THeap<TData>::dipDown(int i)
 {
     int minChild = findMinChild(i);
-    while ((minChild != -1) and (getWeight(minChild) < getWeight(i)))
+    while ((minChild != -1) and (elements[minChild] < elements[i]))
     {
         transpose(i, minChild);
         i = minChild;
@@ -89,58 +77,37 @@ void THeap<TData>::heapify()
 }
 
 template<typename TData>
-THeap<TData>::THeap(const THeap<TData>& other)
+THeap<TData>::THeap(TData* elements_, int size_, int base_)
 {
-    base = other.base;
-    capacity = other.capacity;
-    size = other.size;
-    keys = new int[capacity];
-    for (int i = 0; i < size; i++)
-        keys[i] = other.keys[i];
-    elements = other.elements;
-}
-
-template<typename TData>
-THeap<TData>::THeap(TData* const elements_, int size_, TWeightFunc weight_, int base_)
-{
-    elements = elements_;
     capacity = size_;
     size = size_;
-    keys = new int[capacity];
-    for (int i = 0; i < size; i++)
-        keys[i] = i;
+    elements = elements_;
     base = base_;
-    weight = weight_;
     heapify();
 }
 
 template<typename TData>
-THeap<TData>::~THeap()
+TData THeap<TData>::pullTop()
 {
-    if (capacity > 0)
-        delete[] keys;
-}
-
-template<typename TData>
-TData* THeap<TData>::pullTop()
-{
-    int index = keys[0];
+    TData element = elements[0];
     transpose(0, size - 1);
     dipDown(0);
     size--;
-    return elements + index;
+    return element;
 }
 
 template<typename TData>
 void THeap<TData>::sort()
 {
+    heapify();
     int realSize = size;
-    for (int i = size - 1; i >= 0; i--)
+    int i = size - 1;
+    while (size > 1)
     {
-        transpose(0, i);
+        transpose(0, size - 1);
         size--;
         dipDown(0);
-        elements[i] = elements[keys[i]];
+        i--;
     }
     size = realSize;
 }
