@@ -152,10 +152,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Graph.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="TGraph.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TEdge.h" />
+    <ClInclude Include="TGraph.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\x64\Debug\Lib.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

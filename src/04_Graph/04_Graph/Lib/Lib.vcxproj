@@ -19,13 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TestClass.h" />
     <ClInclude Include="THeap.h" />
     <ClInclude Include="TSplitSet.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TestClass.cpp" />
-    <ClCompile Include="THeap.cpp" />
+    <ClCompile Include="TSplitSet.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

@@ -1,29 +1,42 @@
 #ifndef _THEAP_H_
 #define _THEAP_H_
-#include <ciso646>
+#include <iostream>
 
 template<typename TData>
 class THeap
 {
-public:
-    int base;
     int capacity;
     int size;
+    int base;
     TData* elements;
 
     void transpose(int i, int j);
     int min(int first, int second) const;
     int findMinChild(int i) const;
-    //void popUp(int i);
+    void popUp(int i);
     void dipDown(int i);
     void heapify();
 public:
-    THeap(const THeap& other) = default;
-    THeap(TData* elements_, int size_, int base_ = 2);
-    ~THeap() = default;
-    TData pullTop();
+    THeap<TData>(const THeap<TData>&) = default;
+    THeap<TData>(TData* elements_, int size_, int base_ = 2);
+    ~THeap<TData>() = default;
+
+    TData popMin();
     void sort();
+    void output() const;
+    bool full() const;
+    bool empty() const;
 };
+
+template<typename TData>
+THeap<TData>::THeap(TData* elements_, int size_, int base_)
+{
+    base = base_;
+    capacity = size_;
+    size = size_;
+    elements = elements_;
+    heapify();
+}
 
 template<typename TData>
 void THeap<TData>::transpose(int i, int j)
@@ -46,20 +59,35 @@ int THeap<TData>::findMinChild(int i) const
         return -1;
     int firstChild, lastChild, minChild;
     firstChild = i * base + 1;
-    lastChild = min(size - 1, i * base + base);
+    lastChild = min(size - 1, base * (i + 1));
     minChild = firstChild;
     for (int i = firstChild + 1; i <= lastChild; i++)
         if (elements[i] < elements[minChild])
             minChild = i;
     return minChild;
+}
 
+template<typename TData>
+void THeap<TData>::popUp(int i)
+{
+    while (i > 0)
+    {
+        int p = (i - 1) / base;
+        if (elements[p] > elements[i])
+        {
+            transpose(i, p);
+            i = p;
+        }
+        else
+            break;
+    }
 }
 
 template<typename TData>
 void THeap<TData>::dipDown(int i)
 {
     int minChild = findMinChild(i);
-    while ((minChild != -1) and (elements[minChild] < elements[i]))
+    while ((minChild != -1) && (elements[minChild] < elements[i]))
     {
         transpose(i, minChild);
         i = minChild;
@@ -71,45 +99,49 @@ template<typename TData>
 void THeap<TData>::heapify()
 {
     for (int i = size - 1; i >= 0; i--)
-    {
         dipDown(i);
-    }
 }
 
 template<typename TData>
-THeap<TData>::THeap(TData* elements_, int size_, int base_)
+TData THeap<TData>::popMin()
 {
-    capacity = size_;
-    size = size_;
-    elements = elements_;
-    base = base_;
-    heapify();
-}
-
-template<typename TData>
-TData THeap<TData>::pullTop()
-{
-    TData element = elements[0];
-    transpose(0, size - 1);
-    dipDown(0);
+    TData temp = elements[0];
+    elements[0] = elements[size - 1];
     size--;
-    return element;
+    dipDown(0);
+    return temp;
 }
 
 template<typename TData>
 void THeap<TData>::sort()
 {
-    heapify();
-    int realSize = size;
-    int i = size - 1;
     while (size > 1)
     {
         transpose(0, size - 1);
         size--;
         dipDown(0);
-        i--;
     }
-    size = realSize;
+    output();
 }
 
-#endif
+template<typename TData>
+void THeap<TData>::output() const
+{
+    for (int i = 0; i < capacity; i++)
+        std::cout << elements[i] << ' ';
+    std::cout << '\n';
+}
+
+template<typename TData>
+bool THeap<TData>::full() const
+{
+    return capacity == size;
+}
+
+template<typename TData>
+bool THeap<TData>::empty() const
+{
+    return size == 0;
+}
+
+#endif // !_THEAP_H_
