@@ -8,10 +8,12 @@ struct TGraph
 {
     TEdge* edges = nullptr;
     int vertexCount = 0, edgesCount = 0;
-
+    
+    TGraph() = default;
+    TGraph(std::initializer_list<TEdge> data);
     void output() const;
     TGraph kruskalAlgorithm() const;
-    TGraph dijkstraAlgorithm() const;
+    void dijkstraAlgorithm(int*& dist, int*& up) const;
 };
 
 #endif //!_TGRAPH_H_

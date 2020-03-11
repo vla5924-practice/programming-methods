@@ -153,6 +153,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="TEdge.cpp" />
     <ClCompile Include="TGraph.cpp" />
   </ItemGroup>
   <ItemGroup>
