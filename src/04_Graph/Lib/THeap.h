@@ -15,12 +15,12 @@ class THeap
     int findMinChild(int i) const;
     void popUp(int i);
     void dipDown(int i);
-    void heapify();
 public:
     THeap<TData>(const THeap<TData>&) = default;
     THeap<TData>(TData* elements_, int size_, int base_ = 2);
     ~THeap<TData>() = default;
-
+    
+    void heapify();
     TData popMin();
     void sort();
     void output() const;
