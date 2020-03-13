@@ -27,40 +27,48 @@ TGraph TGraph::kruskalAlgorithm() const
     return result;
 }
 
-void TGraph::dijkstraAlgorithm(int*& dist, int*& up) const
+void TGraph::dijkstraAlgorithm(int*& dist, int*& up, int vertexStart) const
 {
-    dist = new int[vertexCount];
-    up = new int[vertexCount];
-    dist[0] = 0;
-    up[0] = 0;
+    dist = new int(vertexCount);
+    up = new int(vertexCount);
     for (int i = 0; i < vertexCount; i++)
     {
-        dist[i] = INT_MAX;
+        if (i == vertexStart)
+            dist[i] = 0;
+        else
+            dist[i] = INT_MAX;
         up[i] = 0;
     }
-    THeap<int> marks(dist, vertexCount);
+    int k = 0;
+    THeap<int> marks(dist, vertexCount, 2);
     while (!marks.empty())
     {
-        int minMark = marks.popMin(), vertex;
+        int minMark = marks.topMin(), minMarkVertex;
         for (int i = 0; i < vertexCount; i++)
             if (dist[i] == minMark)
-                vertex = i;
+                minMarkVertex = i;
         for (int i = 0; i < edgesCount; i++)
         {
-            if (edges[i].incidental(minMark))
+            if (edges[i].incidental(minMarkVertex))
             {
-                if (dist[minMark] + edges[i].weight < dist[edges[i].x])
+                if (dist[minMarkVertex] + edges[i].weight < dist[edges[i].x])
                 {
-                    dist[edges[i].x] = dist[minMark] + edges[i].weight;
-                    up[edges[i].x] = minMark;
+                    dist[edges[i].x] = dist[minMarkVertex] + edges[i].weight;
+                    up[edges[i].x] = minMarkVertex;
                 }
-                if (dist[minMark] + edges[i].weight < dist[edges[i].y])
+                if (dist[minMarkVertex] + edges[i].weight < dist[edges[i].y])
                 {
-                    dist[edges[i].y] = dist[minMark] + edges[i].weight;
-                    up[edges[i].y] = minMark;
+                    dist[edges[i].y] = dist[minMarkVertex] + edges[i].weight;
+                    up[edges[i].y] = minMarkVertex;
                 }
             }
         }
+        marks.output();                                                // DEBUG
+        marks.popMin();
+        marks.output();                                                // DEBUG
+        for (int i = 0; i < vertexCount; i++)                          // DEBUG
+            std::cout << up[i] << "|";                                 // DEBUG
+        std::cout << std::endl << "-------------------" << std::endl;  // DEBUG
     }
 }
 

@@ -13,7 +13,7 @@ struct TGraph
     TGraph(std::initializer_list<TEdge> data);
     void output() const;
     TGraph kruskalAlgorithm() const;
-    void dijkstraAlgorithm(int*& dist, int*& up) const;
+    void dijkstraAlgorithm(int*& dist, int*& up, int vertexStart = 0) const;
 };
 
 #endif //!_TGRAPH_H_

@@ -22,6 +22,7 @@ public:
     
     void heapify();
     TData popMin();
+    TData topMin();
     void sort();
     void output() const;
     bool full() const;
@@ -110,6 +111,12 @@ TData THeap<TData>::popMin()
     size--;
     dipDown(0);
     return temp;
+}
+
+template<typename TData>
+TData THeap<TData>::topMin()
+{
+    return elements[0];
 }
 
 template<typename TData>
