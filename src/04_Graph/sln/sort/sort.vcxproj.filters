@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="..\..\sample\sort.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Resources">
-      <UniqueIdentifier>{65607e0d-ac10-422f-9ca6-4711d700b363}</UniqueIdentifier>
+    <Filter Include="resources">
+      <UniqueIdentifier>{295ec864-ab19-4b48-85b7-419470905566}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="..\x64\Debug\Lib.lib">
-      <Filter>Resources</Filter>
+    <Library Include="..\Debug\lib.lib">
+      <Filter>resources</Filter>
     </Library>
   </ItemGroup>
 </Project>

@@ -1,5 +1,6 @@
 #ifndef _TEDGE_H_
 #define _TEDGE_H_
+
 #include <map>
 
 struct TEdge

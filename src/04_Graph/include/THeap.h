@@ -19,10 +19,9 @@ public:
     THeap<TData>(const THeap<TData>&) = default;
     THeap<TData>(TData* elements_, int size_, int base_ = 2);
     ~THeap<TData>() = default;
-    
+
     void heapify();
     TData popMin();
-    TData topMin();
     void sort();
     void output() const;
     bool full() const;
@@ -111,12 +110,6 @@ TData THeap<TData>::popMin()
     size--;
     dipDown(0);
     return temp;
-}
-
-template<typename TData>
-TData THeap<TData>::topMin()
-{
-    return elements[0];
 }
 
 template<typename TData>

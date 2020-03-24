@@ -2,7 +2,7 @@
 
 TGraph TGraph::kruskalAlgorithm() const
 {
-    TSplitSet vertex(vertexCount);
+    TDisjointSet vertex(vertexCount);
     TGraph result;
     result.vertexCount = vertexCount;
     result.edges = new TEdge[vertexCount - 1];
@@ -27,48 +27,40 @@ TGraph TGraph::kruskalAlgorithm() const
     return result;
 }
 
-void TGraph::dijkstraAlgorithm(int*& dist, int*& up, int vertexStart) const
+void TGraph::dijkstraAlgorithm(int*& dist, int*& up) const
 {
-    dist = new int(vertexCount);
-    up = new int(vertexCount);
+    dist = new int[vertexCount];
+    up = new int[vertexCount];
+    dist[0] = 0;
+    up[0] = 0;
     for (int i = 0; i < vertexCount; i++)
     {
-        if (i == vertexStart)
-            dist[i] = 0;
-        else
-            dist[i] = INT_MAX;
+        dist[i] = INT_MAX;
         up[i] = 0;
     }
-    int k = 0;
-    THeap<int> marks(dist, vertexCount, 2);
+    THeap<int> marks(dist, vertexCount);
     while (!marks.empty())
     {
-        int minMark = marks.topMin(), minMarkVertex;
+        int minMark = marks.popMin(), vertex;
         for (int i = 0; i < vertexCount; i++)
             if (dist[i] == minMark)
-                minMarkVertex = i;
+                vertex = i;
         for (int i = 0; i < edgesCount; i++)
         {
-            if (edges[i].incidental(minMarkVertex))
+            if (edges[i].incidental(minMark))
             {
-                if (dist[minMarkVertex] + edges[i].weight < dist[edges[i].x])
+                if (dist[minMark] + edges[i].weight < dist[edges[i].x])
                 {
-                    dist[edges[i].x] = dist[minMarkVertex] + edges[i].weight;
-                    up[edges[i].x] = minMarkVertex;
+                    dist[edges[i].x] = dist[minMark] + edges[i].weight;
+                    up[edges[i].x] = minMark;
                 }
-                if (dist[minMarkVertex] + edges[i].weight < dist[edges[i].y])
+                if (dist[minMark] + edges[i].weight < dist[edges[i].y])
                 {
-                    dist[edges[i].y] = dist[minMarkVertex] + edges[i].weight;
-                    up[edges[i].y] = minMarkVertex;
+                    dist[edges[i].y] = dist[minMark] + edges[i].weight;
+                    up[edges[i].y] = minMark;
                 }
             }
         }
-        marks.output();                                                // DEBUG
-        marks.popMin();
-        marks.output();                                                // DEBUG
-        for (int i = 0; i < vertexCount; i++)                          // DEBUG
-            std::cout << up[i] << "|";                                 // DEBUG
-        std::cout << std::endl << "-------------------" << std::endl;  // DEBUG
     }
 }
 

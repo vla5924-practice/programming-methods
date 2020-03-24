@@ -1,6 +1,6 @@
-#include "TSplitSet.h"
+#include "TDisjointSet.h"
 
-TSplitSet::TSplitSet(int size_)
+TDisjointSet::TDisjointSet(int size_)
 {
     size = size_;
     set = new int[size];
@@ -8,19 +8,19 @@ TSplitSet::TSplitSet(int size_)
         set[i] = -1;
 }
 
-TSplitSet::~TSplitSet()
+TDisjointSet::~TDisjointSet()
 {
     delete[] set;
 }
 
-void TSplitSet::createSingleton(int i)
+void TDisjointSet::createSingleton(int i)
 {
     if (i < 0 || i >= size)
         throw std::out_of_range("Index undefined");
     set[i] = i;
 }
 
-void TSplitSet::unite(int i, int j)
+void TDisjointSet::unite(int i, int j)
 {
     if (i < 0 || i >= size || j < 0 || j >= size)
         throw std::out_of_range("Index undefined");
@@ -29,7 +29,7 @@ void TSplitSet::unite(int i, int j)
             set[k] = i;
 }
 
-int TSplitSet::findSet(int i) const
+int TDisjointSet::findSet(int i) const
 {
     if (i < 0 || i >= size)
         throw std::out_of_range("Index undefined");

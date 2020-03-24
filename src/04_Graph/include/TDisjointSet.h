@@ -1,18 +1,20 @@
-#ifndef _TSPLITSET_H_
-#define _TSPLITSET_H_
+#ifndef _TDISJOINTSET_H_
+#define _TDISJOINTSET_H_
+
 #include <iostream>
 #include <exception>
 
-class TSplitSet
+class TDisjointSet
 {
     int size;
     int* set;
 
 public:
-    TSplitSet(int size);
-    ~TSplitSet();
+    TDisjointSet(int size);
+    ~TDisjointSet();
     void createSingleton(int i);
     void unite(int i, int j);
     int findSet(int i) const;
 };
-#endif // !_TSPLITSET_H_
+
+#endif
