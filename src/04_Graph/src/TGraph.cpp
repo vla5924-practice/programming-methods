@@ -253,6 +253,58 @@ TPathData TGraph::dijkstraAlgorithm(TVertexId startVertex) const
     return pathList;
 }
 
+inline int TGraph::getVertexCount() const
+{
+    return vertexCount;
+}
+
+inline int TGraph::getEdgesCount() const
+{
+    return edgesCount;
+}
+
+bool TGraph::hasEdge(TVertexId x, TVertexId y) const
+{
+    for (int i = 0; i < edgesCount; i++)
+        if (edges[i].incidental(x) && edges[i].incidental(y))
+            return true;
+    return false;
+}
+
+TEdgeList TGraph::getEdges() const
+{
+    TEdgeList list(edgesCount);
+    for (int i = 0; i < edgesCount; i++)
+        list[i] = edges[i];
+    return list;
+}
+
+TEdgeList TGraph::getEdges(TEdgeFilterFunc filter) const
+{
+    TEdgeList list;
+    for (int i = 0; i < edgesCount; i++)
+        if((*filter)(edges[i]))
+            list.push_back(edges[i]);
+    return list;
+}
+
+float TGraph::getWeight() const
+{
+    float weight = 0.0f;
+    for (int i = 0; i < edgesCount; i++)
+        weight += edges[i].weight;
+    return weight;
+}
+
+float TGraph::getWeight(TEdgeFilterFunc filter) const
+{
+    float weight = 0.0f;
+    for (int i = 0; i < edgesCount; i++)
+        if((*filter)(edges[i]))
+            weight += edges[i].weight;
+    return weight;
+}
+
 void TGraph::print() const
 {
     std::cout << "[\n";
@@ -269,9 +321,7 @@ std::istream& operator>>(std::istream& input, TGraph& graph)
         throw TGraph::InvalidParameterError();
     TEdge* edges_ = new TEdge[edgesCount_];
     for (int i = 0; i < edgesCount_; i++)
-    {
         input >> edges_[i].x >> edges_[i].y >> edges_[i].weight;
-    }
     graph = TGraph(edges_, edgesCount_, vertexCount_);
     return input;
 }

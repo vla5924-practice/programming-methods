@@ -14,6 +14,9 @@
 #include "TPathData.h"
 #include "Exception.h"
 
+using TEdgeFilterFunc = bool (*) (const TEdge&);
+using TEdgeList = std::vector<TEdge>;
+
 class TGraph
 {
     TEdge* edges;
@@ -36,6 +39,14 @@ public:
     TGraph kruskalAlgorithm() const;
     TPathData dijkstraAlgorithm(TVertexId startVertex = 0) const;
 
+    inline int getVertexCount() const;
+    inline int getEdgesCount() const;
+    bool hasEdge(TVertexId x, TVertexId y) const;
+    TEdgeList getEdges() const;
+    TEdgeList getEdges(TEdgeFilterFunc filter) const;
+    float getWeight() const;
+    float getWeight(TEdgeFilterFunc filter) const;
+
     friend std::istream& operator>>(std::istream& input, TGraph& graph);
 
     classException(SelfLoopedGraphError, "Graph has self-loops.");
@@ -44,4 +55,4 @@ public:
     classException(InvalidParameterError, "Graph has invalid metrics given.");
 };
 
-#endif //!_TGRAPH_H_
+#endif
