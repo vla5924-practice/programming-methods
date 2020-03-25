@@ -3,14 +3,16 @@
 
 #include <map>
 
+using TVertexId = int;
+
 struct TEdge
 {
-    int x, y;
+    TVertexId x, y;
     int weight = 0;
     TEdge() = default;
-    TEdge(int x_, int y_, int weight_);
+    TEdge(TVertexId x_, TVertexId y_, int weight_);
     //bool incidental(const TEdge& other) const;
-    bool incidental(int vertex) const;
+    bool incidental(TVertexId vertex) const;
     bool operator> (const TEdge& edge) const { return weight > edge.weight; }
     bool operator< (const TEdge& edge) const { return weight < edge.weight; }
     bool operator>=(const TEdge& edge) const { return weight >= edge.weight; }

@@ -21,11 +21,17 @@ public:
     ~THeap<TData>() = default;
 
     void heapify();
-    TData popMin();
+    void popMin();
+    const TData& topMin() const;
     void sort();
+
     void output() const;
+
     bool full() const;
     bool empty() const;
+
+    inline int getSize() const;
+    inline int getCapacity() const;
 };
 
 template<typename TData>
@@ -103,13 +109,17 @@ void THeap<TData>::heapify()
 }
 
 template<typename TData>
-TData THeap<TData>::popMin()
+void THeap<TData>::popMin()
 {
-    TData temp = elements[0];
     elements[0] = elements[size - 1];
     size--;
     dipDown(0);
-    return temp;
+}
+
+template<typename TData>
+const TData& THeap<TData>::topMin() const
+{
+    return elements[0];
 }
 
 template<typename TData>
@@ -142,6 +152,18 @@ template<typename TData>
 bool THeap<TData>::empty() const
 {
     return size == 0;
+}
+
+template<typename TData>
+int THeap<TData>::getSize() const
+{
+    return size;
+}
+
+template<typename TData>
+int THeap<TData>::getCapacity() const
+{
+    return capacity;
 }
 
 #endif // !_THEAP_H_

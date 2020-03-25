@@ -20,14 +20,21 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\sample\graph.cpp" />
+    <ClCompile Include="..\..\src\TAdjacencyList.cpp" />
+    <ClCompile Include="..\..\src\TAdjacencyMatrix.cpp" />
     <ClCompile Include="..\..\src\TEdge.cpp" />
     <ClCompile Include="..\..\src\TGraph.cpp" />
     <ClCompile Include="..\..\src\TPair.cpp" />
+    <ClCompile Include="..\..\src\TPathList.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\include\Exception.h" />
+    <ClInclude Include="..\..\include\TAdjacencyList.h" />
+    <ClInclude Include="..\..\include\TAdjacencyMatrix.h" />
     <ClInclude Include="..\..\include\TEdge.h" />
     <ClInclude Include="..\..\include\TGraph.h" />
     <ClInclude Include="..\..\include\TPair.h" />
+    <ClInclude Include="..\..\include\TPathList.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\Debug\lib.lib" />
