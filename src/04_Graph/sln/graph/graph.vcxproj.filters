@@ -28,7 +28,7 @@
     <ClCompile Include="..\..\src\TAdjacencyList.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\TPathList.cpp">
+    <ClCompile Include="..\..\src\TPathData.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -48,10 +48,10 @@
     <ClInclude Include="..\..\include\TAdjacencyList.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\TPathList.h">
+    <ClInclude Include="..\..\include\Exception.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Exception.h">
+    <ClInclude Include="..\..\include\TPathData.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,8 @@
 #ifndef _TADJACENCYMATRIX_H_
 #define _TADJACENCYMATRIX_H_
 
+#include <iostream>
+
 class TAdjacencyMatrix
 {
     bool* matrix;
@@ -15,6 +17,7 @@ public:
     bool* operator[](int i) { return matrix + i * vertexCount; }
     const bool* operator[](int i) const { return matrix + i * vertexCount; }
     inline int size() const;
+    void print() const;
 };
 
 #endif

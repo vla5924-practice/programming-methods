@@ -1,81 +1,5 @@
 #include "TGraph.h"
 
-TGraph TGraph::kruskalAlgorithm() const
-{
-    TDisjointSet vertex(vertexCount);
-    TGraph result;
-    result.vertexCount = vertexCount;
-    result.edges = new TEdge[vertexCount - 1];
-    for (int i = 0; i < vertexCount; i++)
-    {
-        vertex.createSingleton(i);
-    }
-    THeap<TEdge> heapEdges(edges, edgesCount);
-    int tEdgesCount = 0;
-    while ((tEdgesCount != vertexCount - 1) && (!heapEdges.empty()))
-    {
-        TEdge edge = heapEdges.topMin();
-        heapEdges.topMin();
-        int setX = vertex.findSet(edge.x), setY = vertex.findSet(edge.y);
-        if (setX != setY)
-        {
-            vertex.unite(setX, setY);
-            result.edges[tEdgesCount] = edge;
-            tEdgesCount++;
-        }
-    }
-    result.edgesCount = tEdgesCount;
-    return result;
-}
-
-TPathList TGraph::dijkstraAlgorithm(TVertexId startVertex) const
-{
-    float* dist = new float[vertexCount];
-    TVertexId* up = new TVertexId[vertexCount];
-    TPair* distId = new TPair[vertexCount];
-    for (int i = 0; i < vertexCount; i++)
-    {
-        distId[i].distance = std::numeric_limits<float>::infinity();
-        distId[i].vertex = i;
-        up[i] = 0;
-    }
-    distId[startVertex].distance = 0.0f;
-    THeap<TPair> vertexIds(distId, vertexCount);
-    while (!vertexIds.empty())
-    {
-        TPair minId = vertexIds.topMin();
-        TVertexId index = 0, indexX = 0, indexY = 0;
-        for (int i = 0; i < edgesCount; i++)
-        {
-            if (edges[i].incidental(minId.vertex))
-            {
-                for (int j = 0; j < vertexIds.getSize(); j++)
-                {
-                    if (distId[j].vertex == edges[i].x)
-                        indexX = j;
-                    if (distId[j].vertex == edges[i].y)
-                        indexY = j;
-                }
-                if (minId.distance + edges[i].weight < distId[indexX].distance)
-                {
-                    distId[indexX].distance = minId.distance + edges[i].weight;
-                    up[edges[i].x] = minId.vertex;
-                }
-                if (minId.distance + edges[i].weight < distId[indexY].distance)
-                {
-                    distId[indexY].distance = minId.distance + edges[i].weight;
-                    up[edges[i].y] = minId.vertex;
-                }
-            }
-        }
-        dist[minId.vertex] = minId.distance;
-        vertexIds.popMin();
-    }
-    TPathList pathList(dist, up, vertexCount, startVertex);
-    delete[] dist, delete[] up, delete[] distId;
-    return pathList;
-}
-
 bool TGraph::connected(const TAdjacencyMatrix& adjMatrix) const
 {
     TAdjacencyList adjList(vertexCount);
@@ -109,7 +33,7 @@ bool TGraph::connected(const TAdjacencyMatrix& adjMatrix) const
     for (size_t i = 0; i < vertexUsed.size(); i++)
         if (!vertexUsed[i])
         {
-            isGraphConnected = false; 
+            isGraphConnected = false;
             break;
         }
     return isGraphConnected;
@@ -174,8 +98,86 @@ TGraph::TGraph(std::initializer_list<TEdge> edgesList, int vertexCount_)
     }
 }
 
-void TGraph::output() const
+TGraph TGraph::kruskalAlgorithm() const
 {
+    TDisjointSet vertex(vertexCount);
+    TGraph result;
+    result.vertexCount = vertexCount;
+    result.edges = new TEdge[vertexCount - 1];
+    for (int i = 0; i < vertexCount; i++)
+    {
+        vertex.createSingleton(i);
+    }
+    THeap<TEdge> heapEdges(edges, edgesCount);
+    int tEdgesCount = 0;
+    while ((tEdgesCount != vertexCount - 1) && (!heapEdges.empty()))
+    {
+        TEdge edge = heapEdges.topMin();
+        heapEdges.topMin();
+        int setX = vertex.findSet(edge.x), setY = vertex.findSet(edge.y);
+        if (setX != setY)
+        {
+            vertex.unite(setX, setY);
+            result.edges[tEdgesCount] = edge;
+            tEdgesCount++;
+        }
+    }
+    result.edgesCount = tEdgesCount;
+    return result;
+}
+
+TPathData TGraph::dijkstraAlgorithm(TVertexId startVertex) const
+{
+    float* dist = new float[vertexCount];
+    TVertexId* up = new TVertexId[vertexCount];
+    TPair* distId = new TPair[vertexCount];
+    for (int i = 0; i < vertexCount; i++)
+    {
+        distId[i].distance = std::numeric_limits<float>::infinity();
+        distId[i].vertex = i;
+        up[i] = 0;
+    }
+    distId[startVertex].distance = 0.0f;
+    THeap<TPair> vertexIds(distId, vertexCount);
+    while (!vertexIds.empty())
+    {
+        TPair minId = vertexIds.topMin();
+        TVertexId index = 0, indexX = 0, indexY = 0;
+        for (int i = 0; i < edgesCount; i++)
+        {
+            if (edges[i].incidental(minId.vertex))
+            {
+                for (int j = 0; j < vertexIds.getSize(); j++)
+                {
+                    if (distId[j].vertex == edges[i].x)
+                        indexX = j;
+                    if (distId[j].vertex == edges[i].y)
+                        indexY = j;
+                }
+                if (minId.distance + edges[i].weight < distId[indexX].distance)
+                {
+                    distId[indexX].distance = minId.distance + edges[i].weight;
+                    up[edges[i].x] = minId.vertex;
+                }
+                if (minId.distance + edges[i].weight < distId[indexY].distance)
+                {
+                    distId[indexY].distance = minId.distance + edges[i].weight;
+                    up[edges[i].y] = minId.vertex;
+                }
+            }
+        }
+        dist[minId.vertex] = minId.distance;
+        vertexIds.popMin();
+    }
+    TPathData pathList(dist, up, vertexCount, startVertex);
+    delete[] dist, delete[] up, delete[] distId;
+    return pathList;
+}
+
+void TGraph::print() const
+{
+    std::cout << "[\n";
     for (int i = 0; i < edgesCount; i++)
-        std::cout << '(' << edges[i].x << ", " << edges[i].y << ") {" << edges[i].weight << "}\n";
+        std::cout << "\t(" << edges[i].x << ", " << edges[i].y << ") {" << edges[i].weight << "}\n";
+    std::cout << "]\n";
 }

@@ -1,6 +1,6 @@
-#include "TPathList.h"
+#include "TPathData.h"
 
-TPathList::TPathList()
+TPathData::TPathData()
 {
     dist = nullptr;
     up = nullptr;
@@ -8,7 +8,7 @@ TPathList::TPathList()
     startVertex = 0;
 }
 
-TPathList::TPathList(const TPathList& other)
+TPathData::TPathData(const TPathData& other)
 {
     vertexCount = other.vertexCount;
     startVertex = other.startVertex;
@@ -21,7 +21,7 @@ TPathList::TPathList(const TPathList& other)
     }
 }
 
-TPathList::TPathList(TPathList&& other)
+TPathData::TPathData(TPathData&& other)
 {
     vertexCount = other.vertexCount;
     startVertex = other.startVertex;
@@ -32,7 +32,7 @@ TPathList::TPathList(TPathList&& other)
     other.up = nullptr;
 }
 
-TPathList::TPathList(float*& dist_, TVertexId*& up_, int vertexCount_, TVertexId startVertex_)
+TPathData::TPathData(float*& dist_, TVertexId*& up_, int vertexCount_, TVertexId startVertex_)
 {
     vertexCount = vertexCount_;
     startVertex = startVertex_;
@@ -45,7 +45,7 @@ TPathList::TPathList(float*& dist_, TVertexId*& up_, int vertexCount_, TVertexId
     }
 }
 
-TPathList::~TPathList()
+TPathData::~TPathData()
 {
     if (dist)
         delete[] dist;
@@ -53,24 +53,24 @@ TPathList::~TPathList()
         delete[] up;
 }
 
-const float& TPathList::getDist(TVertexId i) const
+const float& TPathData::getDist(TVertexId i) const
 {
     return dist[i];
 }
 
-const TVertexId& TPathList::getUp(TVertexId i) const
+const TVertexId& TPathData::getUp(TVertexId i) const
 {
     return up[i];
 }
 
-const TVertexId& TPathList::getStartVertex() const
+const TVertexId& TPathData::getStartVertex() const
 {
     return startVertex;
 }
 
-std::vector<std::vector<TVertexId>> TPathList::getPaths() const
+TPathList TPathData::getPaths() const
 {
-    std::vector<std::vector<TVertexId>> paths;
+    TPathList paths;
     paths.resize(vertexCount - 1);
     for (int i = 0; i < vertexCount; i++)
     {

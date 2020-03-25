@@ -25,7 +25,7 @@
     <ClCompile Include="..\..\src\TEdge.cpp" />
     <ClCompile Include="..\..\src\TGraph.cpp" />
     <ClCompile Include="..\..\src\TPair.cpp" />
-    <ClCompile Include="..\..\src\TPathList.cpp" />
+    <ClCompile Include="..\..\src\TPathData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Exception.h" />
@@ -34,7 +34,7 @@
     <ClInclude Include="..\..\include\TEdge.h" />
     <ClInclude Include="..\..\include\TGraph.h" />
     <ClInclude Include="..\..\include\TPair.h" />
-    <ClInclude Include="..\..\include\TPathList.h" />
+    <ClInclude Include="..\..\include\TPathData.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\Debug\lib.lib" />

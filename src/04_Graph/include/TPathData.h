@@ -3,24 +3,25 @@
 
 #include <vector>
 using TVertexId = int;
+using TPathList = std::vector<std::vector<TVertexId>>;
 
-class TPathList
+class TPathData
 {
     float* dist;
     TVertexId* up;
     int vertexCount;
     TVertexId startVertex;
 public:
-    TPathList();
-    TPathList(const TPathList& other);
-    TPathList(TPathList&& other);
-    TPathList(float*& dist_, TVertexId*& up_, int vertexCount_, TVertexId startVertex_);
-    ~TPathList();
+    TPathData();
+    TPathData(const TPathData& other);
+    TPathData(TPathData&& other);
+    TPathData(float*& dist_, TVertexId*& up_, int vertexCount_, TVertexId startVertex_);
+    ~TPathData();
 
     inline const float& getDist(TVertexId i) const;
     inline const TVertexId& getUp(TVertexId i) const;
     inline const TVertexId& getStartVertex() const;
-    std::vector<std::vector<TVertexId>> getPaths() const;
+    TPathList getPaths() const;
 };
 
 #endif

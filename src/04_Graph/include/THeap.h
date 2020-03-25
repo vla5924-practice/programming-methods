@@ -25,7 +25,7 @@ public:
     const TData& topMin() const;
     void sort();
 
-    void output() const;
+    void print() const;
 
     bool full() const;
     bool empty() const;
@@ -132,13 +132,12 @@ void THeap<TData>::sort()
         size--;
         dipDown(0);
     }
-    output();
 }
 
 template<typename TData>
-void THeap<TData>::output() const
+void THeap<TData>::print() const
 {
-    for (int i = 0; i < capacity; i++)
+    for (int i = 0; i < size; i++)
         std::cout << elements[i] << ' ';
     std::cout << '\n';
 }

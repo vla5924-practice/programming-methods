@@ -16,7 +16,7 @@ int main()
         TEdge(2, 5, 9),
         TEdge(1, 2, 10)
         }, 6);
-    graph1.kruskalAlgorithm().output();
+    graph1.kruskalAlgorithm().print();
 
     TGraph graph2({
         TEdge(0, 1, 5),
@@ -33,12 +33,12 @@ int main()
         TEdge(5, 7, 24),
         TEdge(6, 7, 5)
         }, 8);
-    /*int* dist, * up;
-    graph1.dijkstraAlgorithm(dist, up);
-    for (int i = 0; i < graph1.vertexCount; i++)
-        std::cout << dist[i] << ' ';
-    std::cout << '\n';
-    for (int i = 0; i < graph1.vertexCount; i++)
-        std::cout << up[i] << ' ';
-    std::cout << '\n';*/
+    TPathList pathList = graph2.dijkstraAlgorithm().getPaths();
+    for (size_t i = 0; i < pathList.size(); i++)
+    {
+        for (size_t j = 0; j < pathList[i].size(); j++)
+            std::cout << pathList[i][j] << ' ';
+        std::cout << '\n';
+    }
+
 }
