@@ -1,6 +1,7 @@
 #ifndef _TGRAPH_H_
 #define _TGRAPH_H_
 
+#include <iostream>
 #include <vector>
 #include <queue>
 
@@ -21,11 +22,21 @@ class TGraph
     void freeEdges();
 public:
     TGraph();
+    TGraph(const TGraph& other);
+    TGraph(TGraph&& other);
     TGraph(std::initializer_list<TEdge> edgesList, int vertexCount_);
+    TGraph(TEdge* edges_, int edgesCount_, int vertexCount_);
+    ~TGraph();
+
+    TGraph& operator=(const TGraph& other);
+    TGraph& operator=(TGraph&& other);
+
     void print() const;
     TAdjacencyMatrix generateAdjacencyMatrix() const;
     TGraph kruskalAlgorithm() const;
     TPathData dijkstraAlgorithm(TVertexId startVertex = 0) const;
+
+    friend std::istream& operator>>(std::istream& input, TGraph& graph);
 
     classException(SelfLoopedGraphError, "Graph has self-loops.");
     classException(DirectedGraphError, "Graph has directed edges.");

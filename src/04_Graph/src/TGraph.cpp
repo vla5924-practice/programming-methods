@@ -58,10 +58,30 @@ void TGraph::freeEdges()
     if (edges)
         delete[] edges;
     edgesCount = 0;
+    edges = nullptr;
 }
 
 TGraph::TGraph() : edges(nullptr), vertexCount(0), edgesCount(0)
 {
+}
+
+TGraph::TGraph(const TGraph& other)
+{
+    vertexCount = other.vertexCount;
+    edgesCount = other.edgesCount;
+    edges = new TEdge[edgesCount];
+    for (int i = 0; i < edgesCount; i++)
+        edges[i] = other.edges[i];
+}
+
+TGraph::TGraph(TGraph&& other)
+{
+    vertexCount = other.vertexCount;
+    edgesCount = other.edgesCount;
+    edges = other.edges;
+    other.vertexCount = 0;
+    other.edgesCount = 0;
+    other.edges = nullptr;
 }
 
 TGraph::TGraph(std::initializer_list<TEdge> edgesList, int vertexCount_)
@@ -72,7 +92,6 @@ TGraph::TGraph(std::initializer_list<TEdge> edgesList, int vertexCount_)
     edgesCount = static_cast<int>(edgesList.size());
     edges = new TEdge[edgesCount];
     int i = 0;
-    vertexCount = vertexCount_;
     for (const TEdge& edge : edgesList)
     {
         edges[i++] = edge;
@@ -85,7 +104,7 @@ TGraph::TGraph(std::initializer_list<TEdge> edgesList, int vertexCount_)
             freeEdges();
             throw SelfLoopedGraphError();
         }
-        if (adjMatrix[edges[i].x][edges[i].y] || adjMatrix[edges[i].y][edges[i].x])
+        if (adjMatrix[edges[i].x][edges[i].y] != adjMatrix[edges[i].y][edges[i].x])
         {
             freeEdges();
             throw DirectedGraphError();
@@ -96,6 +115,66 @@ TGraph::TGraph(std::initializer_list<TEdge> edgesList, int vertexCount_)
         freeEdges();
         throw MulticonnectedGraphError();
     }
+}
+
+TGraph::TGraph(TEdge* edges_, int edgesCount_, int vertexCount_)
+{
+    if ((vertexCount_ < 0) || (edgesCount_ < 0))
+        throw InvalidParameterError();
+    vertexCount = vertexCount_;
+    edgesCount = edgesCount_;
+    edges = new TEdge[edgesCount];
+    for (int i = 0; i > edgesCount; i++)
+    {
+        edges[i] = edges_[i];
+    }
+    TAdjacencyMatrix adjMatrix = generateAdjacencyMatrix();
+    for (int i = 0; i < edgesCount; i++)
+    {
+        if (edges[i].x == edges[i].y)
+        {
+            freeEdges();
+            throw SelfLoopedGraphError();
+        }
+        if (adjMatrix[edges[i].x][edges[i].y] != adjMatrix[edges[i].y][edges[i].x])
+        {
+            freeEdges();
+            throw DirectedGraphError();
+        }
+    }
+    if (!connected(adjMatrix))
+    {
+        freeEdges();
+        throw MulticonnectedGraphError();
+    }
+}
+
+TGraph::~TGraph()
+{
+    freeEdges();
+}
+
+TGraph& TGraph::operator=(const TGraph& other)
+{
+    freeEdges();
+    vertexCount = other.vertexCount;
+    edgesCount = other.edgesCount;
+    edges = new TEdge[edgesCount];
+    for (int i = 0; i < edgesCount; i++)
+        edges[i] = other.edges[i];
+    return *this;
+}
+
+TGraph& TGraph::operator=(TGraph&& other)
+{
+    freeEdges();
+    vertexCount = other.vertexCount;
+    edgesCount = other.edgesCount;
+    edges = other.edges;
+    other.vertexCount = 0;
+    other.edgesCount = 0;
+    other.edges = nullptr;
+    return *this;
 }
 
 TGraph TGraph::kruskalAlgorithm() const
@@ -113,7 +192,7 @@ TGraph TGraph::kruskalAlgorithm() const
     while ((tEdgesCount != vertexCount - 1) && (!heapEdges.empty()))
     {
         TEdge edge = heapEdges.topMin();
-        heapEdges.topMin();
+        heapEdges.popMin();
         int setX = vertex.findSet(edge.x), setY = vertex.findSet(edge.y);
         if (setX != setY)
         {
@@ -178,6 +257,21 @@ void TGraph::print() const
 {
     std::cout << "[\n";
     for (int i = 0; i < edgesCount; i++)
-        std::cout << "\t(" << edges[i].x << ", " << edges[i].y << ") {" << edges[i].weight << "}\n";
+        std::cout << "    (" << edges[i].x << ", " << edges[i].y << ") {" << edges[i].weight << "}\n";
     std::cout << "]\n";
+}
+
+std::istream& operator>>(std::istream& input, TGraph& graph)
+{
+    int vertexCount_ = 0, edgesCount_ = 0;
+    input >> vertexCount_ >> edgesCount_;
+    if ((vertexCount_ < 0) || (edgesCount_ < 0))
+        throw TGraph::InvalidParameterError();
+    TEdge* edges_ = new TEdge[edgesCount_];
+    for (int i = 0; i < edgesCount_; i++)
+    {
+        input >> edges_[i].x >> edges_[i].y >> edges_[i].weight;
+    }
+    graph = TGraph(edges_, edgesCount_, vertexCount_);
+    return input;
 }

@@ -16,6 +16,7 @@ int main()
         TEdge(2, 5, 9),
         TEdge(1, 2, 10)
         }, 6);
+    graph1.print();
     graph1.kruskalAlgorithm().print();
 
     TGraph graph2({
@@ -33,6 +34,7 @@ int main()
         TEdge(5, 7, 24),
         TEdge(6, 7, 5)
         }, 8);
+    graph2.print();
     TPathList pathList = graph2.dijkstraAlgorithm().getPaths();
     for (size_t i = 0; i < pathList.size(); i++)
     {
