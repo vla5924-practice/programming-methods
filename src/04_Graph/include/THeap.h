@@ -125,6 +125,7 @@ const TData& THeap<TData>::topMin() const
 template<typename TData>
 void THeap<TData>::sort()
 {
+    heapify();
     while (size > 1)
     {
         transpose(0, size - 1);
