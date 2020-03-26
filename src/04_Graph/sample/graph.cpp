@@ -16,9 +16,12 @@ int main()
         TEdge(2, 5, 9),
         TEdge(1, 2, 10)
         }, 6);
+    std::cout << "Test Graph 1:\n";
     graph1.print();
+    std::cout << "Paths Tree 1:\n";
     graph1.kruskalAlgorithm().print();
 
+    std::cout << "Test Graph 2:\n";
     TGraph graph2({
         TEdge(0, 1, 5),
         TEdge(1, 2, 2),
@@ -35,12 +38,31 @@ int main()
         TEdge(6, 7, 5)
         }, 8);
     graph2.print();
-    TPathList pathList = graph2.dijkstraAlgorithm().getPaths();
+    std::cout << "Paths Data 2:\n";
+    TPathData pathData = graph2.dijkstraAlgorithm();
+    TPathList pathList = pathData.getPaths();
     for (size_t i = 0; i < pathList.size(); i++)
     {
+        std::cout << '[' << i << "] dist: " << pathData.getDist(TVertexId(i)) << " path: ";
         for (size_t j = 0; j < pathList[i].size(); j++)
             std::cout << pathList[i][j] << ' ';
         std::cout << '\n';
     }
 
+    TGraph graph3;
+    std::cout << "Test Graph 3:\nInput >> ";
+    std::cin >> graph3;
+    graph3.print();
+    std::cout << "Paths Tree 3:\n";
+    graph3.kruskalAlgorithm().print();
+    std::cout << "Paths Data 3:\n";
+    pathData = graph3.dijkstraAlgorithm();
+    pathList = pathData.getPaths();
+    for (size_t i = 0; i < pathList.size(); i++)
+    {
+        std::cout << '[' << i << "] dist: " << pathData.getDist(TVertexId(i)) << " path: ";
+        for (size_t j = 0; j < pathList[i].size(); j++)
+            std::cout << pathList[i][j] << ' ';
+        std::cout << '\n';
+    }
 }

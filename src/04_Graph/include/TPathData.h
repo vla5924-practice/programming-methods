@@ -18,9 +18,12 @@ public:
     TPathData(float*& dist_, TVertexId*& up_, int vertexCount_, TVertexId startVertex_);
     ~TPathData();
 
-    inline const float& getDist(TVertexId i) const;
-    inline const TVertexId& getUp(TVertexId i) const;
-    inline const TVertexId& getStartVertex() const;
+    TPathData& operator=(const TPathData& other);
+    TPathData& operator=(TPathData&& other);
+
+    inline float getDist(TVertexId i) const { return dist[i]; }
+    inline TVertexId getUp(TVertexId i) const { return up[i]; }
+    inline TVertexId getStartVertex() const { return startVertex; }
     TPathList getPaths() const;
 };
 

@@ -53,19 +53,38 @@ TPathData::~TPathData()
         delete[] up;
 }
 
-const float& TPathData::getDist(TVertexId i) const
+TPathData& TPathData::operator=(const TPathData& other)
 {
-    return dist[i];
+    if (dist)
+        delete[] dist;
+    if (up)
+        delete[] up;
+    vertexCount = other.vertexCount;
+    startVertex = other.startVertex;
+    dist = new float[vertexCount];
+    up = new TVertexId[vertexCount];
+    for (TVertexId i = 0; i < vertexCount; i++)
+    {
+        dist[i] = other.dist[i];
+        up[i] = other.up[i];
+    }
+    return *this;
 }
 
-const TVertexId& TPathData::getUp(TVertexId i) const
+TPathData& TPathData::operator=(TPathData&& other)
 {
-    return up[i];
-}
-
-const TVertexId& TPathData::getStartVertex() const
-{
-    return startVertex;
+    if (dist)
+        delete[] dist;
+    if (up)
+        delete[] up;
+    vertexCount = other.vertexCount;
+    startVertex = other.startVertex;
+    dist = other.dist;
+    up = other.up;
+    other.vertexCount = 0;
+    other.dist = nullptr;
+    other.up = nullptr;
+    return *this;
 }
 
 TPathList TPathData::getPaths() const
