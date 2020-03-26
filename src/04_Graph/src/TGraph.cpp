@@ -124,7 +124,7 @@ TGraph::TGraph(TEdge* edges_, int edgesCount_, int vertexCount_)
     vertexCount = vertexCount_;
     edgesCount = edgesCount_;
     edges = new TEdge[edgesCount];
-    for (int i = 0; i > edgesCount; i++)
+    for (int i = 0; i < edgesCount; i++)
     {
         edges[i] = edges_[i];
     }

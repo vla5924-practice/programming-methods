@@ -89,26 +89,27 @@ TPathData& TPathData::operator=(TPathData&& other)
 
 TPathList TPathData::getPaths() const
 {
+    std::vector<float> tempDist(dist, dist + vertexCount);
     TPathList paths;
     paths.resize(vertexCount - 1);
     for (int i = 0; i < vertexCount; i++)
     {
-        float maxDistation = dist[0];
-        int maxDistationIndex = 0;
+        float maxDist = tempDist[0];
+        TVertexId maxDistId = 0;
         for (int j = 1; j < vertexCount; j++)
-            if (maxDistation < dist[j])
+            if (maxDist < tempDist[j])
             {
-                maxDistation = dist[j];
-                maxDistationIndex = j;
+                maxDist = tempDist[j];
+                maxDistId = j;
             }
-        dist[maxDistationIndex] = -1;
-        if (maxDistationIndex == startVertex)
+        tempDist[maxDistId] = -1;
+        if (maxDistId == startVertex)
             continue;
-        int v = maxDistationIndex;
-        while (v != startVertex)
+        TVertexId vertex = maxDistId;
+        while (vertex != startVertex)
         {
-            paths[i].push_back(v);
-            v = up[v];
+            paths[i].push_back(vertex);
+            vertex = up[vertex];
         }
         paths[i].push_back(startVertex);
         std::reverse(paths[i].begin(), paths[i].end());
