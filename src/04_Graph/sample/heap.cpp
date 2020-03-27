@@ -18,8 +18,6 @@ int main()
     std::cout << '\n';
 
     THeap<int> heap(arr, size);
-    heap.sort();
-    for (int i = 0; i < size; i++)
-        std::cout << arr[i] << ' ';
-    std::cout << '\n';
+    heap.heapify();
+    heap.print();
 }
