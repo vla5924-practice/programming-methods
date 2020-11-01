@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Main Source">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="headers">
+      <UniqueIdentifier>{6281916b-cd71-4c42-98fc-bb5b04397e81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="implementation">
+      <UniqueIdentifier>{2d1ec643-b96d-4850-810d-901c6e0736ea}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Main Source</Filter>
+    </ClCompile>
+    <ClCompile Include="implementation\App.cpp">
+      <Filter>implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="implementation\Date.cpp">
+      <Filter>implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="implementation\Task.cpp">
+      <Filter>implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="implementation\TaskDay.cpp">
+      <Filter>implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="implementation\TaskStd.cpp">
+      <Filter>implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="implementation\Time.cpp">
+      <Filter>implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="implementation\Exceptions.cpp">
+      <Filter>implementation</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="includes.hpp">
+      <Filter>Main Source</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\App.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Date.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Task.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\TaskDay.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\TaskStd.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Time.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Exceptions.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
