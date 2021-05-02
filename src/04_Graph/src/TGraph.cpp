@@ -10,6 +10,7 @@ bool TGraph::connected(const TAdjacencyMatrix& adjMatrix) const
                 adjList.add(i, j);
                 adjList.add(j, i);
             }
+    // Use BFS to check if graph has one connectivity component
     std::vector<bool> vertexUsed;
     vertexUsed.resize(vertexCount, false);
     std::queue<TVertexId> vertexQueue;
@@ -29,6 +30,7 @@ bool TGraph::connected(const TAdjacencyMatrix& adjMatrix) const
             }
         }
     }
+    // If there are vertexes not used in BFS then graph is not connected
     bool isGraphConnected = true;
     for (size_t i = 0; i < vertexUsed.size(); i++)
         if (!vertexUsed[i])
@@ -156,6 +158,8 @@ TGraph::~TGraph()
 
 TGraph& TGraph::operator=(const TGraph& other)
 {
+    if ((this == &other) || (*this == other))
+        return *this;
     freeEdges();
     vertexCount = other.vertexCount;
     edgesCount = other.edgesCount;
@@ -167,6 +171,8 @@ TGraph& TGraph::operator=(const TGraph& other)
 
 TGraph& TGraph::operator=(TGraph&& other)
 {
+    if (this == &other)
+        return *this;
     freeEdges();
     vertexCount = other.vertexCount;
     edgesCount = other.edgesCount;
@@ -177,90 +183,27 @@ TGraph& TGraph::operator=(TGraph&& other)
     return *this;
 }
 
-TGraph TGraph::kruskalAlgorithm() const
+bool TGraph::operator==(const TGraph& other) const
 {
-    TDisjointSet vertex(vertexCount);
-    TGraph result;
-    result.vertexCount = vertexCount;
-    result.edges = new TEdge[vertexCount - 1];
-    for (int i = 0; i < vertexCount; i++)
+    if ((vertexCount != other.vertexCount) || (edgesCount != other.edgesCount))
+        return false;
+    if (edges == other.edges)
+        return true;
+    for (int i = 0; i < edgesCount; i++)
     {
-        vertex.createSingleton(i);
+        bool found = false;
+        for (int j = 0; j < edgesCount; j++)
+            if (edges[i].like(edges[j]))
+                found = true;
+        if (!found)
+            return false;
     }
-    THeap<TEdge> heapEdges(edges, edgesCount);
-    int tEdgesCount = 0;
-    while ((tEdgesCount != vertexCount - 1) && (!heapEdges.empty()))
-    {
-        TEdge edge = heapEdges.topMin();
-        heapEdges.popMin();
-        int setX = vertex.findSet(edge.x), setY = vertex.findSet(edge.y);
-        if (setX != setY)
-        {
-            vertex.unite(setX, setY);
-            result.edges[tEdgesCount] = edge;
-            tEdgesCount++;
-        }
-    }
-    result.edgesCount = tEdgesCount;
-    return result;
+    return true;
 }
 
-TPathData TGraph::dijkstraAlgorithm(TVertexId startVertex) const
+bool TGraph::operator!=(const TGraph& other) const
 {
-    float* dist = new float[vertexCount];
-    TVertexId* up = new TVertexId[vertexCount];
-    TPair* distId = new TPair[vertexCount];
-    for (int i = 0; i < vertexCount; i++)
-    {
-        distId[i].distance = std::numeric_limits<float>::infinity();
-        distId[i].vertex = i;
-        up[i] = 0;
-    }
-    distId[startVertex].distance = 0.0f;
-    THeap<TPair> vertexIds(distId, vertexCount);
-    while (!vertexIds.empty())
-    {
-        TPair minId = vertexIds.topMin();
-        TVertexId index = 0, indexX = 0, indexY = 0;
-        for (int i = 0; i < edgesCount; i++)
-        {
-            if (edges[i].incidental(minId.vertex))
-            {
-                for (int j = 0; j < vertexIds.getSize(); j++)
-                {
-                    if (distId[j].vertex == edges[i].x)
-                        indexX = j;
-                    if (distId[j].vertex == edges[i].y)
-                        indexY = j;
-                }
-                if (minId.distance + edges[i].weight < distId[indexX].distance)
-                {
-                    distId[indexX].distance = minId.distance + edges[i].weight;
-                    up[edges[i].x] = minId.vertex;
-                }
-                if (minId.distance + edges[i].weight < distId[indexY].distance)
-                {
-                    distId[indexY].distance = minId.distance + edges[i].weight;
-                    up[edges[i].y] = minId.vertex;
-                }
-            }
-        }
-        dist[minId.vertex] = minId.distance;
-        vertexIds.popMin();
-    }
-    TPathData pathList(dist, up, vertexCount, startVertex);
-    delete[] dist, delete[] up, delete[] distId;
-    return pathList;
-}
-
-inline int TGraph::getVertexCount() const
-{
-    return vertexCount;
-}
-
-inline int TGraph::getEdgesCount() const
-{
-    return edgesCount;
+    return !(*this == other);
 }
 
 bool TGraph::hasEdge(TVertexId x, TVertexId y) const
@@ -305,12 +248,13 @@ float TGraph::getWeight(TEdgeFilterFunc filter) const
     return weight;
 }
 
-void TGraph::print() const
+std::ostream& operator<<(std::ostream& output, const TGraph& graph)
 {
     std::cout << "[\n";
-    for (int i = 0; i < edgesCount; i++)
-        std::cout << "    (" << edges[i].x << ", " << edges[i].y << ") {" << edges[i].weight << "}\n";
+    for (int i = 0; i < graph.edgesCount; i++)
+        std::cout << "    (" << graph.edges[i].x << ", " << graph.edges[i].y << ") {" << graph.edges[i].weight << "}\n";
     std::cout << "]\n";
+    return output;
 }
 
 std::istream& operator>>(std::istream& input, TGraph& graph)

@@ -55,6 +55,8 @@ TPathData::~TPathData()
 
 TPathData& TPathData::operator=(const TPathData& other)
 {
+    if (this == &other)
+        return *this;
     if (dist)
         delete[] dist;
     if (up)
@@ -73,6 +75,8 @@ TPathData& TPathData::operator=(const TPathData& other)
 
 TPathData& TPathData::operator=(TPathData&& other)
 {
+    if (this == &other)
+        return *this;
     if (dist)
         delete[] dist;
     if (up)

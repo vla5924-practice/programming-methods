@@ -1,15 +1,17 @@
 #include <iostream>
 #include <random>
-#include "THeap.h"
-
-constexpr int size = 10;
+#include "TArrayController.h"
 
 int main()
 {
     std::random_device rd;
     std::mt19937 generator(rd()); // Mersenne
 
-    int arr[size] = { 0 };
+    std::cout << "Input array size: ";
+    int size = 1;
+    std::cin >> size;
+
+    int* arr = new int[size];
     for (int i = 0; i < size; i++)
     {
         arr[i] = static_cast<int>(generator() % 1000U);
@@ -17,9 +19,10 @@ int main()
     }
     std::cout << '\n';
 
-    THeap<int> heap(arr, size);
-    heap.sort();
+    TArrayController::heapSort(arr, size);
     for (int i = 0; i < size; i++)
         std::cout << arr[i] << ' ';
     std::cout << '\n';
+
+    delete[] arr;
 }

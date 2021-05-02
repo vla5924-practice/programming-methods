@@ -7,12 +7,8 @@
     <Filter Include="src">
       <UniqueIdentifier>{0ac033ee-3365-49e6-b253-a8e60a4b3e3e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="resources">
-      <UniqueIdentifier>{937607f5-3742-4571-ac1c-af8e3ce2c4f3}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\sample\graph.cpp" />
     <ClCompile Include="..\..\src\TEdge.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -54,10 +50,5 @@
     <ClInclude Include="..\..\include\TPathData.h">
       <Filter>include</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="..\Debug\lib.lib">
-      <Filter>resources</Filter>
-    </Library>
   </ItemGroup>
 </Project>

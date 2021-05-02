@@ -1,5 +1,5 @@
-#ifndef _TPATHLIST_H_
-#define _TPATHLIST_H_
+#ifndef _TPATHDATA_H_
+#define _TPATHDATA_H_
 
 #include <vector>
 using TVertexId = int;

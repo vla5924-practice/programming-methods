@@ -15,6 +15,7 @@ struct TEdge
 
     bool incidental(const TEdge& other) const;
     bool incidental(TVertexId vertex) const;
+    bool like(const TEdge& other) const;
 
     bool operator> (const TEdge& edge) const;
     bool operator< (const TEdge& edge) const;

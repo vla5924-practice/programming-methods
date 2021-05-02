@@ -7,10 +7,18 @@
     <Filter Include="resources">
       <UniqueIdentifier>{295ec864-ab19-4b48-85b7-419470905566}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{40563dfc-3798-4185-a75b-0d8302267092}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\Debug\lib.lib">
       <Filter>resources</Filter>
     </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\TArrayController.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

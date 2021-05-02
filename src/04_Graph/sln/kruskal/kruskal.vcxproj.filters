@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\sample\kruskal.cpp" />
+    <ClCompile Include="..\..\src\KruskalAlgorithm.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{df6f6ca4-fe98-4226-98fd-21500e75faed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{9405b3cd-9208-4df4-a30c-764c865affba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources">
+      <UniqueIdentifier>{6d874095-591c-4a2f-95a6-8f32bf23fea4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\KruskalAlgorithm.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\x64\Debug\graph.lib">
+      <Filter>resources</Filter>
+    </Library>
+    <Library Include="..\x64\Debug\lib.lib">
+      <Filter>resources</Filter>
+    </Library>
+  </ItemGroup>
+</Project>

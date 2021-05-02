@@ -17,7 +17,6 @@ public:
     bool* operator[](int i) { return matrix + i * vertexCount; }
     const bool* operator[](int i) const { return matrix + i * vertexCount; }
     inline int size() const;
-    void print() const;
 };
 
 #endif

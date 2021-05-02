@@ -42,13 +42,3 @@ inline int TAdjacencyMatrix::size() const
 {
     return vertexCount * vertexCount;
 }
-
-void TAdjacencyMatrix::print() const
-{
-    for (int i = 0; i < vertexCount; i++)
-    {
-        for (int j = 0; j < vertexCount; j++)
-            std::cout << (*this)[i][j] << ' ';
-        std::cout << '\n';
-    }
-}

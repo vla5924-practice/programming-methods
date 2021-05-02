@@ -5,8 +5,6 @@
 #include <vector>
 #include <queue>
 
-#include "THeap.h"
-#include "TDisjointSet.h"
 #include "TEdge.h"
 #include "TPair.h"
 #include "TAdjacencyMatrix.h"
@@ -34,13 +32,16 @@ public:
     TGraph& operator=(const TGraph& other);
     TGraph& operator=(TGraph&& other);
 
-    void print() const;
-    TAdjacencyMatrix generateAdjacencyMatrix() const;
-    TGraph kruskalAlgorithm() const;
-    TPathData dijkstraAlgorithm(TVertexId startVertex = 0) const;
+    bool operator==(const TGraph& other) const;
+    bool operator!=(const TGraph& other) const;
 
-    inline int getVertexCount() const;
-    inline int getEdgesCount() const;
+    TAdjacencyMatrix generateAdjacencyMatrix() const;
+
+    // Some accessors to make this class useful
+    inline int getVertexCount() const { return vertexCount; }
+    inline int getEdgesCount() const { return edgesCount;  }
+    inline TEdge* pEdges() const { return edges;  }
+
     bool hasEdge(TVertexId x, TVertexId y) const;
     TEdgeList getEdges() const;
     TEdgeList getEdges(TEdgeFilterFunc filter) const;
@@ -48,6 +49,7 @@ public:
     float getWeight(TEdgeFilterFunc filter) const;
 
     friend std::istream& operator>>(std::istream& input, TGraph& graph);
+    friend std::ostream& operator<<(std::ostream& output, const TGraph& graph);
 
     classException(SelfLoopedGraphError, "Graph has self-loops.");
     classException(DirectedGraphError, "Graph has directed edges.");
